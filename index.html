@@ -559,10 +559,13 @@ async function logUso(acao){if(!EMAIL)return;try{await sb.from("uso").insert({em
 async function checar(session){
   if(!session){EMAIL=null;mostrarGate();return}
   const email=(session.user.email||"").toLowerCase();
-  let ok=false;
-  try{const {data,error}=await sb.from("corretores").select("email,ativo").eq("email",email).maybeSingle();ok=!error&&data&&data.ativo===true}catch(_){}
+  let ok=false,det="";
+  try{const {data,error}=await sb.from("corretores").select("email,ativo").eq("email",email).maybeSingle();
+    ok=!error&&data&&data.ativo===true;
+    det=error?("erro: "+(error.code||"")+" "+(error.message||"")):(data?("linha achada, ativo="+data.ativo):"nenhuma linha visivel para "+email)}catch(e){det="excecao: "+(e&&e.message)}
   if(!ok){EMAIL=null;$("app").hidden=true;$("gate").hidden=false;$("g-form").hidden=true;
     gmsg("crit","Este e-mail ("+email+") não está autorizado. Fale com quem te enviou o acesso.");
+    $("g-msg").insertAdjacentHTML("beforeend",'<p class="hint">Detalhe técnico: '+esc(det)+'</p>');
     $("g-msg").insertAdjacentHTML("beforeend",'<div class="actions"><button class="btn alt" id="g-out" type="button">Sair</button></div>');
     $("g-out").onclick=()=>sb.auth.signOut();return}
   const era=EMAIL;EMAIL=email;
