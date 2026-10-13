@@ -203,7 +203,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 23</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 25</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um link de acesso.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -419,9 +419,9 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><span id="meuplano" class="hint"></span><br><b>Corretor Master · versão 23</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><b>Corretor Master · versão 25</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
-<div id="wm" aria-hidden="true"></div>
+
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -986,11 +986,8 @@ $("portais").addEventListener("click",async e=>{
 
 /* ---------- proteção: marca d'água e limites ---------- */
 function marcaDagua(email){
-  const w=$("wm");if(!w)return;
-  if(!email){w.style.backgroundImage="none";return}
-  const t=String(email).replace(/[<>&"']/g,"");
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200"><text x="160" y="100" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="rgb(128,128,128)" fill-opacity="0.16" transform="rotate(-25 160 100)">${t}</text></svg>`;
-  w.style.backgroundImage="url(\"data:image/svg+xml;utf8,"+encodeURIComponent(svg)+"\")";
+  const l=$("lic");if(!l)return;
+  l.textContent=email?"Acesso licenciado para "+String(email):"";
 }
 /* ---------- acesso (Supabase) ---------- */
 const SB_URL="https://ccaccwjolrdabubzplnb.supabase.co", SB_KEY="sb_publishable_hJXQYLu4m474caKIRYu41g_z34AyrgL";
