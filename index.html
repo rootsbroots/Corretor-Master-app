@@ -203,7 +203,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 22</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 23</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um link de acesso.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -419,7 +419,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><span id="meuplano" class="hint"></span><br><b>Corretor Master · versão 22</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><span id="meuplano" class="hint"></span><br><b>Corretor Master · versão 23</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 <div id="wm" aria-hidden="true"></div>
 <div class="toast" id="toast" hidden></div>
@@ -456,7 +456,10 @@ function ui(){marcarAtalhos();
   document.querySelectorAll(".seg:not(.segx)").forEach(g=>g.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(S[g.dataset.k]===b.dataset.v))));
 }
 function render(){ui();if(!PRONTO)return;if(GER&&!gerado())pintar();clearTimeout(tm);tm=setTimeout(atualizar,180)}
-async function api(body){const {data,error}=await sb.functions.invoke("smart-endpoint",{body});if(error)throw error;if(data&&data.erro==="limite"){const e=new Error("limite");e.msg=data.msg;e.plano=data.plano;throw e}return data}
+let _DISP="";
+function dispId(){if(_DISP)return _DISP;try{_DISP=localStorage.getItem("cm_disp")||""}catch(_){}if(!_DISP){_DISP=(self.crypto&&crypto.randomUUID?crypto.randomUUID():"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,12));try{localStorage.setItem("cm_disp",_DISP)}catch(_){}}return _DISP}
+function bloqueioDisp(msg){$("app").hidden=true;$("gate").hidden=false;$("sair").hidden=true;$("g-form").hidden=true;$("g-code").hidden=true;const m="Olá! Sou "+(EMAIL||"corretor")+" e preciso trocar o aparelho do meu acesso ao Corretor Master.";$("g-msg").innerHTML='<div class="alert crit">'+esc(msg)+'</div><div class="actions"><a class="btn acc" href="https://wa.me/'+FONE_UPG+'?text='+encodeURIComponent(m)+'" target="_blank" rel="noopener">Pedir liberação no WhatsApp</a></div>'}
+async function api(body){body=Object.assign({disp:dispId()},body);const {data,error}=await sb.functions.invoke("smart-endpoint",{body});if(error)throw error;if(data&&data.erro==="dispositivo"){bloqueioDisp(data.msg);const e=new Error("dispositivo");e.msg=data.msg;throw e}if(data&&data.erro==="limite"){const e=new Error("limite");e.msg=data.msg;e.plano=data.plano;throw e}return data}
 async function atualizar(){
   const my=++seq;
   try{const d=await api({acao:"links",S});if(my!==seq)return;LS=d.links;RES=d;pintar();regiao()}
