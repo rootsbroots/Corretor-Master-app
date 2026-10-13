@@ -194,6 +194,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 .ent-c a{font-size:13px}
 #wm{position:fixed;inset:0;z-index:15;pointer-events:none;background-repeat:repeat}
 .termos{font-size:11.5px;color:var(--ink-2);text-align:center;margin:24px auto 110px;max-width:560px;padding-inline:8px;line-height:1.5}
+[hidden]{display:none!important}
 </style>
 <style>html,body{margin:0}body{min-height:100%}</style>
 </head>
@@ -202,7 +203,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 18</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 20</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um link de acesso.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -359,6 +360,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
           <div id="avisos"></div>
           <p class="summary" id="resumo"></p>
           <div id="portais"></div>
+          <div id="ger-msg"></div>
           <div class="actions">
             <button class="btn acc" id="zap-copy" type="button">Copiar mensagem para o cliente</button>
             <button class="btn" id="pdf" type="button">Baixar relatório em PDF</button>
@@ -417,7 +419,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><b>Corretor Master · versão 18</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><b>Corretor Master · versão 20</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 <div id="wm" aria-hidden="true"></div>
 <div class="toast" id="toast" hidden></div>
@@ -439,7 +441,9 @@ function cidadeObj(){return CIDADES.find(c=>c.s===S.cidade)||CIDADES[0]}
 function esc(t){return String(t).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
 
 /* ---------- render ---------- */
-let LS=[],RES={resumo:"",resumoTxt:"",msg:"",avisos:[],obs:[]},PRONTO=false,seq=0,tm=null;
+let LS=[],RES={resumo:"",resumoTxt:"",msg:"",avisos:[],obs:[]},PRONTO=false,seq=0,tm=null,GER=null;
+const skey=()=>JSON.stringify(["tipo","locCasa","piscina","vista","parque","condicao","status","mobiliado","vmin","vmax","cidade","bairro","condo","condoOutro"].map(k=>String(S[k]??"")));
+const gerado=()=>!!(GER&&GER.key===skey());
 function ui(){marcarAtalhos();
   $("f-bairro").hidden=!(cidadeObj().s==="goiania")||(S.tipo==="casa"&&S.locCasa==="condominio")||(S.tipo==="apartamento"&&S.vista==="com"&&S.parque);
   const cond=S.tipo==="casa"&&S.locCasa==="condominio";
@@ -451,8 +455,8 @@ function ui(){marcarAtalhos();
   if(S.tipo==="apartamento"&&!(S.vista==="com"&&cidadeObj().s==="goiania"))$("f-parque").hidden=true;
   document.querySelectorAll(".seg:not(.segx)").forEach(g=>g.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(S[g.dataset.k]===b.dataset.v))));
 }
-function render(){ui();if(!PRONTO)return;clearTimeout(tm);tm=setTimeout(atualizar,180)}
-async function api(body){const {data,error}=await sb.functions.invoke("smart-endpoint",{body});if(error)throw error;if(data&&data.erro==="limite"){const e=new Error("limite");e.msg=data.msg;throw e}return data}
+function render(){ui();if(!PRONTO)return;if(GER&&!gerado())pintar();clearTimeout(tm);tm=setTimeout(atualizar,180)}
+async function api(body){const {data,error}=await sb.functions.invoke("smart-endpoint",{body});if(error)throw error;if(data&&data.erro==="limite"){const e=new Error("limite");e.msg=data.msg;e.plano=data.plano;throw e}return data}
 async function atualizar(){
   const my=++seq;
   try{const d=await api({acao:"links",S});if(my!==seq)return;LS=d.links;RES=d;pintar();regiao()}
@@ -461,10 +465,15 @@ async function atualizar(){
 function pintar(){
   $("avisos").innerHTML=RES.avisos.map(([k,t])=>`<div class="alert ${k}">${esc(t)}</div>`).join("");
   $("resumo").innerHTML=RES.resumo;$("hero-t").textContent=RES.resumoTxt||"Qual imóvel o cliente procura?";
+  const ok=gerado();
+  if(ok){LS=GER.res.links;RES.msg=GER.res.msg}else{RES.msg=""}
   $("portais").innerHTML=LS.map((l,i)=>`<div class="portal"><div class="portal-h"><strong>${l.nome}</strong></div>
-    <div class="tags">${l.ap.map(x=>`<span class="tag ok">✓ ${esc(x)}</span>`).join("")}${l.man.map(x=>`<span class="tag man">Conferir: ${esc(x)}</span>`).join("")}</div>
-    <div class="url">${esc(l.url)}</div>
-    <div class="pbtn"><a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener">Abrir</a><button class="btn alt" type="button" data-copy="${i}">Copiar link</button></div></div>`).join("");
+    <div class="tags">${l.ap.map(x=>`<span class="tag ok">✓ ${esc(x)}</span>`).join("")}${l.man.map(x=>`<span class="tag man">Conferir: ${esc(x)}</span>`).join("")}</div>`+
+    (ok?`<div class="url">${esc(l.url)}</div>
+    <div class="pbtn"><a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener">Abrir</a><button class="btn alt" type="button" data-copy="${i}">Copiar link</button></div>`:"")+`</div>`).join("")+
+    (ok?"":`<div class="actions"><button class="btn acc" id="gerar" type="button">🔓 Gerar links desta busca</button></div><p class="hint">Cada conjunto de filtros diferente conta como 1 busca do seu dia. Repetir a mesma busca não gasta de novo.</p>`);
+  ["zap-copy","pdf","zap-wa"].forEach(id=>$(id).hidden=!ok);
+  if(ok)$("ger-msg").innerHTML="";
   $("obs").innerHTML=RES.obs.map(t=>`<li>${esc(t)}</li>`).join("");
   $("zap-wa").href="https://wa.me/?text="+encodeURIComponent(RES.msg);
   pintarEntorno();pintarConvite();
@@ -612,7 +621,7 @@ function gerarPdf(){
 $("pdf").addEventListener("click",async()=>{
   if(!DL)return;
   try{
-    if(!PRONTO||!LS.length){toast("Aguarde os links carregarem");return}
+    if(!PRONTO||!LS.length||!gerado()){toast("Gere os links desta busca primeiro");return}
     const buf=gerarPdf();
     const nome="busca-"+(slugify(S.nome)||"cliente")+".pdf";
     await DL.save({filename:nome,data:buf});
@@ -682,7 +691,7 @@ function msgCalc(){
   if(!CALC)return"";
   const nome=S.nome.trim();
   let m=(nome?"Olá, "+nome+"! ":"Olá! ")+"Segue a simulação de financiamento:\n\n"+CALC.linhas.map(([k,v])=>"• "+k+": "+v).join("\n")+"\n\nEstimativa com as taxas informadas; não substitui a simulação do banco.";
-  if($("c-links").checked&&LS.length)m+="\n\nBuscas separadas para você:\n"+LS.map(l=>l.nome+": "+l.url).join("\n");
+  if($("c-links").checked&&LS.length&&gerado())m+="\n\nBuscas separadas para você:\n"+LS.map(l=>l.nome+": "+l.url).join("\n");
   return m;
 }
 function zapCalc(){const m=msgCalc();$("c-wa").href=m?"https://wa.me/?text="+encodeURIComponent(m):"#"}
@@ -932,7 +941,7 @@ async function entBuscar(){
     if(d&&d.ok){d.cidade=S.cidade;d.origem=origem;ENT=d;if(d.plano){PLANO_ATUAL=d.plano;setUpg()}$("ent-msg").innerHTML=(typeof d.restante==="number")?`<p class="hint">Consultas de entorno que restam hoje: ${d.restante}</p>`:"";pintarEntorno();pintarConvite();logUso("entorno")}
     else{const m={nao_achou:"Não encontrei esse endereço. Tente com rua, número e bairro.",geocodificacao:"O serviço de endereços não respondeu. Tente de novo em instantes.",servico:"O serviço de mapas está ocupado. Tente de novo em instantes.",sem_local:"Digite um endereço ou escolha um bairro."}[d&&d.erro]||"Não foi possível consultar o entorno.";
       $("ent-msg").innerHTML='<div class="alert warn">'+esc(m)+'</div>'+(d&&d.detalhe?'<p class="hint">Detalhe técnico: '+esc(d.detalhe)+'</p>':"")}
-  }catch(e){$("ent-msg").innerHTML='<div class="alert warn">'+esc(e&&e.msg?e.msg:"Não foi possível consultar o entorno. Tente de novo.")+'</div>'+(e&&e.msg&&/consultas de entorno/.test(e.msg)?'<div class="actions"><a class="btn acc" data-upg href="'+esc(upgUrl())+'" target="_blank" rel="noopener">Pedir mais consultas no WhatsApp</a></div>':"")}
+  }catch(e){$("ent-msg").innerHTML='<div class="alert warn">'+esc(e&&e.msg?e.msg:"Não foi possível consultar o entorno. Tente de novo.")+'</div>'+(e&&e.plano?'<div class="actions"><a class="btn acc" data-upg href="'+esc(upgUrl(e.plano))+'" target="_blank" rel="noopener">'+(e.plano==="pro"?"Quero o Unlimited (R$ 7,00)":e.plano==="basico"?"Quero o plano Pro":"Quero fazer upgrade")+'</a></div>':"")}
   $("ent-go").disabled=false;
 }
 
@@ -940,11 +949,29 @@ async function entBuscar(){
 
 /* ---------- pedir upgrade (WhatsApp) ---------- */
 const FONE_UPG="5562982505081";let PLANO_ATUAL="";
-function upgUrl(){
-  const m=`Olá! Sou ${EMAIL||"corretor"} e uso o Corretor Master${PLANO_ATUAL?" no plano "+PLANO_ATUAL:""}. Quero fazer um upgrade para ter mais consultas. Pode me passar as opções?`;
+function upgUrl(p){
+  const pl=p||PLANO_ATUAL,alvo=pl==="pro"?"Unlimited (R$ 7,00)":pl==="basico"?"Pro":"um plano pago";
+  const m=`Olá! Sou ${EMAIL||"corretor"} e uso o Corretor Master${pl?" no plano "+pl:""}. Quero fazer upgrade para ${alvo}. Pode me passar como faço?`;
   return "https://wa.me/"+FONE_UPG+"?text="+encodeURIComponent(m);
 }
 function setUpg(){const a=$("upg");if(a)a.href=upgUrl()}
+
+
+/* ---------- gerar links (conta 1 busca) ---------- */
+$("portais").addEventListener("click",async e=>{
+  const b=e.target.closest("#gerar");if(!b)return;
+  b.disabled=true;$("ger-msg").innerHTML="";
+  const chave=skey();
+  try{
+    const d=await api({acao:"gerar",S});
+    if(chave!==skey()){b.disabled=false;return}
+    GER={key:chave,res:d};pintar();logUso("gerar");
+    if(typeof d.restante==="number")toast("Buscas que restam hoje: "+d.restante,3000);
+  }catch(er){
+    b.disabled=false;
+    $("ger-msg").innerHTML='<div class="alert warn">'+esc(er&&er.msg?er.msg:"Não foi possível gerar os links. Tente de novo.")+'</div>'+(er&&er.plano?'<div class="actions"><a class="btn acc" data-upg href="'+esc(upgUrl(er.plano))+'" target="_blank" rel="noopener">'+(er.plano==="pro"?"Quero o Unlimited (R$ 7,00)":er.plano==="basico"?"Quero o plano Pro":"Quero fazer upgrade")+'</a></div>':"");
+  }
+});
 
 /* ---------- proteção: marca d'água e limites ---------- */
 function marcaDagua(email){
@@ -963,7 +990,7 @@ let EMAIL=null;
 const gmsg=(k,t)=>{$("g-msg").innerHTML=t?`<div class="alert ${k}">${esc(t)}</div>`:""};
 let CARGA=null;
 async function carregar(){const c=await api({acao:"catalogo"});CIDADES=c.cidades;BAIRROS=c.bairros;CONDOS=c.condos;PARQUES=c.parques;PRONTO=true;fillSelects();syncInputs();render();recentes()}
-function limparDados(){ENT=null;ENTLOC=null;CONV_EDIT=false;REG=null;REGC={};PRONTO=false;CARGA=null;CIDADES=[{n:"Goiânia",s:"goiania"}];BAIRROS=[];CONDOS={};PARQUES=[];LS=[]}
+function limparDados(){GER=null;ENT=null;ENTLOC=null;CONV_EDIT=false;REG=null;REGC={};PRONTO=false;CARGA=null;CIDADES=[{n:"Goiânia",s:"goiania"}];BAIRROS=[];CONDOS={};PARQUES=[];LS=[]}
 function mostrarGate(){limparDados();marcaDagua("");$("app").hidden=true;$("gate").hidden=false;$("sair").hidden=true;$("g-form").hidden=false;$("g-code").hidden=true}
 async function logUso(acao){if(!EMAIL)return;try{await sb.from("uso").insert({email:EMAIL,acao})}catch(_){}}
 async function checar(session){
