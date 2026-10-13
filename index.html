@@ -203,7 +203,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 21</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 22</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um link de acesso.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -419,7 +419,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><span id="meuplano" class="hint"></span><br><b>Corretor Master · versão 21</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><span id="meuplano" class="hint"></span><br><b>Corretor Master · versão 22</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 <div id="wm" aria-hidden="true"></div>
 <div class="toast" id="toast" hidden></div>
@@ -631,7 +631,7 @@ $("pdf").addEventListener("click",async()=>{
 
 
 /* ---------- calculadora ---------- */
-let CALC=null;
+let CALC=null,CALCOK="";
 const pct=v=>{const n=parseFloat(String(v).replace(",","."));return isFinite(n)?n:0};
 const R=n=>"R$ "+Math.round(n).toLocaleString("pt-BR");
 const P=n=>String(Math.round(n*100)/100).replace(".",",")+"%";
@@ -642,6 +642,7 @@ function calcular(){
   const sec=t=>`<tr class="sec"><td colspan="3">${t}</td></tr>`,row=(k,a,b,c)=>`<tr${c?` class="${c}"`:""}><td>${esc(k)}</td><td${b===undefined?' colspan="2"':""}>${esc(a)}</td>${b===undefined?"":`<td>${esc(b)}</td>`}</tr>`;
   const com=Math.max(0,pct($("c-com").value)),imob=Math.min(100,Math.max(0,pct($("c-imob").value))),parc=Math.min(100-imob,Math.max(0,pct($("c-parc").value))),imp=Math.min(100,Math.max(0,pct($("c-imp").value)));
   if(!val){CALC=null;zapCalc();out.innerHTML='<div class="empty">Informe o valor do imóvel para ver a simulação.</div>';co.innerHTML='<div class="empty">Informe o valor do imóvel.</div>';return}
+  if(CALCOK!==String(val)){CALC=null;zapCalc();const bt='<div class="empty">Para ver a simulação deste valor, libere o cálculo.<div class="actions" style="margin-top:10px"><button class="btn acc" type="button" id="c-go">🔓 Calcular (conta 1 busca do dia)</button></div><div id="c-msg"></div></div>';out.innerHTML=bt;co.innerHTML='<div class="empty">Libere o cálculo para ver a comissão.</div>';return}
   const entrada=val*ent/100,F=val-entrada,n=anos*12,i=jur?Math.pow(1+jur/100,1/12)-1:0;
   // SAC
   const a=F/n,sIni=a+F*i,sFim=a+a*i,sJur=i*a*n*(n+1)/2;
@@ -698,6 +699,12 @@ function zapCalc(){const m=msgCalc();$("c-wa").href=m?"https://wa.me/?text="+enc
 $("c-links").addEventListener("input",zapCalc);
 $("c-copy").addEventListener("click",()=>{const m=msgCalc();if(!m){toast("Informe o valor do imóvel");return}copiar(m,"Simulação copiada")});
 $("c-wa").addEventListener("click",e=>{if(!CALC){e.preventDefault();toast("Informe o valor do imóvel")}else zapCalc()});
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("#c-go");if(!b)return;
+  const v=String(num($("c-valor").value));b.disabled=true;
+  try{const d=await api({acao:"gerar",calc:v});CALCOK=v;calcular();logUso("calcular");verPlano();if(typeof d.restante==="number")toast("Buscas que restam hoje: "+d.restante,3000)}
+  catch(er){b.disabled=false;const m=$("c-msg");if(m)m.innerHTML='<div class="alert warn">'+esc(er&&er.msg?er.msg:"Não foi possível calcular. Tente de novo.")+'</div>'+(er&&er.plano?'<div class="actions"><a class="btn acc" data-upg href="'+esc(upgUrl(er.plano))+'" target="_blank" rel="noopener">'+(er.plano==="pro"?"Quero o Unlimited (R$ 7,00)":er.plano==="basico"?"Quero o plano Pro":"Quero fazer upgrade")+'</a></div>':"")}
+});
 calcular();
 
 
@@ -991,7 +998,7 @@ let EMAIL=null;
 const gmsg=(k,t)=>{$("g-msg").innerHTML=t?`<div class="alert ${k}">${esc(t)}</div>`:""};
 let CARGA=null;
 async function carregar(){const c=await api({acao:"catalogo"});CIDADES=c.cidades;BAIRROS=c.bairros;CONDOS=c.condos;PARQUES=c.parques;PRONTO=true;fillSelects();syncInputs();render();recentes()}
-function limparDados(){GER=null;ENT=null;ENTLOC=null;CONV_EDIT=false;REG=null;REGC={};PRONTO=false;CARGA=null;CIDADES=[{n:"Goiânia",s:"goiania"}];BAIRROS=[];CONDOS={};PARQUES=[];LS=[]}
+function limparDados(){GER=null;CALCOK="";ENT=null;ENTLOC=null;CONV_EDIT=false;REG=null;REGC={};PRONTO=false;CARGA=null;CIDADES=[{n:"Goiânia",s:"goiania"}];BAIRROS=[];CONDOS={};PARQUES=[];LS=[]}
 function mostrarGate(){limparDados();marcaDagua("");$("app").hidden=true;$("gate").hidden=false;$("sair").hidden=true;$("g-form").hidden=false;$("g-code").hidden=true}
 async function logUso(acao){if(!EMAIL)return;try{await sb.from("uso").insert({email:EMAIL,acao})}catch(_){}}
 async function checar(session){
