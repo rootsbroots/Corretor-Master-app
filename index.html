@@ -202,7 +202,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 16</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 17</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um link de acesso.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -889,6 +889,28 @@ $("ent-gps").addEventListener("click",()=>{
    er=>{$("ent-msg").innerHTML='<div class="alert warn">'+(er.code===1?"Permissão negada. Libere a localização para este site nas configurações do navegador, ou digite o endereço.":"Não foi possível obter a localização. Digite o endereço.")+'</div>'},{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
 });
 $("ent-go").addEventListener("click",()=>entBuscar());
+
+/* reserva: se o servidor não alcançar o mapa, o próprio celular consulta */
+const OSM_C={mercado:['["shop"="supermarket"]','Supermercado'],escola:['["amenity"="school"]','Escola'],farmacia:['["amenity"="pharmacy"]','Farmácia'],saude:['["amenity"~"^(hospital|clinic)$"]','Hospital ou clínica'],padaria:['["shop"="bakery"]','Padaria'],academia:['["leisure"="fitness_centre"]','Academia'],parque:['["leisure"="park"]','Parque ou praça']};
+function osmCat(t){return t.shop==="supermarket"?"mercado":t.amenity==="school"?"escola":t.amenity==="pharmacy"?"farmacia":(t.amenity==="hospital"||t.amenity==="clinic")?"saude":t.shop==="bakery"?"padaria":t.leisure==="fitness_centre"?"academia":t.leisure==="park"?"parque":null}
+function hav(a,b,c,d){const R=6371000,r=x=>x*Math.PI/180,h=Math.sin(r(c-a)/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(r(d-b)/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+async function entDireto(loc,cats,raio){
+  const q=`[out:json][timeout:15];(${cats.map(k=>`nwr(around:${raio},${loc.lat},${loc.lon})${OSM_C[k][0]};`).join("")});out center tags 300;`;
+  let els=null;
+  for(const host of ["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://overpass.private.coffee/api/interpreter"]){
+    const ac=new AbortController(),t=setTimeout(()=>ac.abort(),16000);
+    try{const r=await fetch(host,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"data="+encodeURIComponent(q),signal:ac.signal});
+      if(r.ok){const j=await r.json();if(Array.isArray(j.elements)){els=j.elements;break}}}catch(_){}finally{clearTimeout(t)}
+  }
+  if(!els)return null;
+  const out={};cats.forEach(k=>out[k]={rot:OSM_C[k][1],n:0,itens:[]});
+  const vistos=new Set(),L=[];
+  els.forEach(e=>{const t=e.tags||{},k=osmCat(t),la=e.lat??(e.center&&e.center.lat),lo=e.lon??(e.center&&e.center.lon);
+    if(k&&out[k]&&typeof la==="number"&&typeof lo==="number")L.push({k,nome:String(t.name||"").slice(0,80),m:Math.round(hav(loc.lat,loc.lon,la,lo))})});
+  L.sort((a,b)=>a.m-b.m);
+  L.forEach(x=>{const ch=x.k+"|"+(x.nome?x.nome.toLowerCase():"#"+x.m);if(vistos.has(ch))return;vistos.add(ch);out[x.k].n++;if(out[x.k].itens.length<3)out[x.k].itens.push({nome:x.nome||"(sem nome no mapa)",m:x.m})});
+  return{ok:true,local:loc,raio,cats:out,fonte:"OpenStreetMap (colaborativo; pode estar incompleto)"};
+}
 async function entBuscar(){
   const cats=[...document.querySelectorAll("#ent-cats input:checked")].map(x=>x.value);
   if(!cats.length){$("ent-msg").innerHTML='<div class="alert warn">Marque pelo menos um tipo de lugar.</div>';return}
@@ -901,7 +923,12 @@ async function entBuscar(){
   else{$("ent-msg").innerHTML='<div class="alert warn">Digite um endereço ou escolha um bairro na busca.</div>';return}
   $("ent-go").disabled=true;$("ent-msg").innerHTML='<div class="alert good">Consultando o mapa… pode levar alguns segundos.</div>';
   try{
-    const d=await api(body);
+    let d=await api(body);
+    if(d&&d.erro==="servico"){
+      const loc=d.local||(body.lat!=null?{lat:body.lat,lon:body.lon,nome:"Sua localização"}:null);
+      if(loc){$("ent-msg").innerHTML='<div class="alert good">Tentando por outro caminho…</div>';const r=await entDireto(loc,cats,ENTR);
+        if(r){if(typeof d.restante==="number")r.restante=Math.max(0,d.restante-1);r.plano=d.plano;d=r;try{await api({acao:"contar_entorno"})}catch(_){}}}
+    }
     if(d&&d.ok){d.cidade=S.cidade;d.origem=origem;ENT=d;if(d.plano){PLANO_ATUAL=d.plano;setUpg()}$("ent-msg").innerHTML=(typeof d.restante==="number")?`<p class="hint">Consultas de entorno que restam hoje: ${d.restante}</p>`:"";pintarEntorno();pintarConvite();logUso("entorno")}
     else{const m={nao_achou:"Não encontrei esse endereço. Tente com rua, número e bairro.",geocodificacao:"O serviço de endereços não respondeu. Tente de novo em instantes.",servico:"O serviço de mapas está ocupado. Tente de novo em instantes.",sem_local:"Digite um endereço ou escolha um bairro."}[d&&d.erro]||"Não foi possível consultar o entorno.";
       $("ent-msg").innerHTML='<div class="alert warn">'+esc(m)+'</div>'+(d&&d.detalhe?'<p class="hint">Detalhe técnico: '+esc(d.detalhe)+'</p>':"")}
