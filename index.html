@@ -203,7 +203,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 25</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 27</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um link de acesso.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -215,7 +215,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
       <button class="btn alt" id="g-ok" type="button">Entrar com o código</button>
     </div>
     <div id="g-msg" style="margin-top:12px"></div>
-    <p class="hint" style="margin-top:14px">Uso restrito a corretores autorizados. O conteúdo, os dados e o código são protegidos por direitos autorais. É proibido copiar, reproduzir ou repassar o acesso.</p>
+    <p class="hint" style="margin-top:14px">Uso restrito a corretores autorizados. O conteúdo, os dados e o código são protegidos por direitos autorais. É proibido copiar, reproduzir ou repassar o acesso. Ao entrar, você concorda com os <a href="termos.html" target="_blank" rel="noopener">termos de uso e a política de privacidade</a>.</p>
   </div>
 </div>
 <div id="app" hidden>
@@ -419,7 +419,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><b>Corretor Master · versão 25</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · versão 27</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 
 <div class="toast" id="toast" hidden></div>
@@ -706,7 +706,7 @@ document.addEventListener("click",async e=>{
   const b=e.target.closest("#c-go");if(!b)return;
   const v=String(num($("c-valor").value));b.disabled=true;
   try{const d=await api({acao:"gerar",calc:v});CALCOK=v;calcular();logUso("calcular");verPlano();if(typeof d.restante==="number")toast("Buscas que restam hoje: "+d.restante,3000)}
-  catch(er){b.disabled=false;const m=$("c-msg");if(m)m.innerHTML='<div class="alert warn">'+esc(er&&er.msg?er.msg:"Não foi possível calcular. Tente de novo.")+'</div>'+(er&&er.plano?'<div class="actions"><a class="btn acc" data-upg href="'+esc(upgUrl(er.plano))+'" target="_blank" rel="noopener">'+(er.plano==="pro"?"Quero o Unlimited (R$ 7,00)":er.plano==="basico"?"Quero o plano Pro":"Quero fazer upgrade")+'</a></div>':"")}
+  catch(er){b.disabled=false;const m=$("c-msg");if(m)m.innerHTML='<div class="alert warn">'+esc(er&&er.msg?er.msg:"Não foi possível calcular. Tente de novo.")+'</div>'+upgBtn(er.plano)}
 });
 calcular();
 
@@ -951,7 +951,7 @@ async function entBuscar(){
     if(d&&d.ok){d.cidade=S.cidade;d.origem=origem;ENT=d;if(d.plano){PLANO_ATUAL=d.plano;setUpg()}$("ent-msg").innerHTML=(typeof d.restante==="number")?`<p class="hint">Consultas de entorno que restam hoje: ${d.restante}</p>`:"";pintarEntorno();pintarConvite();logUso("entorno")}
     else{const m={nao_achou:"Não encontrei esse endereço. Tente com rua, número e bairro.",geocodificacao:"O serviço de endereços não respondeu. Tente de novo em instantes.",servico:"O serviço de mapas está ocupado. Tente de novo em instantes.",sem_local:"Digite um endereço ou escolha um bairro."}[d&&d.erro]||"Não foi possível consultar o entorno.";
       $("ent-msg").innerHTML='<div class="alert warn">'+esc(m)+'</div>'+(d&&d.detalhe?'<p class="hint">Detalhe técnico: '+esc(d.detalhe)+'</p>':"")}
-  }catch(e){$("ent-msg").innerHTML='<div class="alert warn">'+esc(e&&e.msg?e.msg:"Não foi possível consultar o entorno. Tente de novo.")+'</div>'+(e&&e.plano?'<div class="actions"><a class="btn acc" data-upg href="'+esc(upgUrl(e.plano))+'" target="_blank" rel="noopener">'+(e.plano==="pro"?"Quero o Unlimited (R$ 7,00)":e.plano==="basico"?"Quero o plano Pro":"Quero fazer upgrade")+'</a></div>':"")}
+  }catch(e){$("ent-msg").innerHTML='<div class="alert warn">'+esc(e&&e.msg?e.msg:"Não foi possível consultar o entorno. Tente de novo.")+'</div>'+upgBtn(e.plano)}
   $("ent-go").disabled=false;
 }
 
@@ -959,8 +959,9 @@ async function entBuscar(){
 
 /* ---------- pedir upgrade (WhatsApp) ---------- */
 const FONE_UPG="5562982505081";let PLANO_ATUAL="";
+function upgBtn(p){return !p||p==="unlimited"?"":'<div class="actions"><a class="btn acc" data-upg href="'+esc(upgUrl(p))+'" target="_blank" rel="noopener">Assinar o Unlimited (R$ 24,90/mês)</a></div>'}
 function upgUrl(p){
-  const pl=p||PLANO_ATUAL,alvo=pl==="pro"?"Unlimited (R$ 7,00)":pl==="basico"?"Pro":"um plano pago";
+  const pl=p||PLANO_ATUAL,alvo="o plano Unlimited (R$ 24,90/mês)";
   const m=`Olá! Sou ${EMAIL||"corretor"} e uso o Corretor Master${pl?" no plano "+pl:""}. Quero fazer upgrade para ${alvo}. Pode me passar como faço?`;
   return "https://wa.me/"+FONE_UPG+"?text="+encodeURIComponent(m);
 }
@@ -980,7 +981,7 @@ $("portais").addEventListener("click",async e=>{
     if(typeof d.restante==="number")toast("Buscas que restam hoje: "+d.restante,3000);
   }catch(er){
     b.disabled=false;
-    $("ger-msg").innerHTML='<div class="alert warn">'+esc(er&&er.msg?er.msg:"Não foi possível gerar os links. Tente de novo.")+'</div>'+(er&&er.plano?'<div class="actions"><a class="btn acc" data-upg href="'+esc(upgUrl(er.plano))+'" target="_blank" rel="noopener">'+(er.plano==="pro"?"Quero o Unlimited (R$ 7,00)":er.plano==="basico"?"Quero o plano Pro":"Quero fazer upgrade")+'</a></div>':"");
+    $("ger-msg").innerHTML='<div class="alert warn">'+esc(er&&er.msg?er.msg:"Não foi possível gerar os links. Tente de novo.")+'</div>'+upgBtn(er.plano);
   }
 });
 
