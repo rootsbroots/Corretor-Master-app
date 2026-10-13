@@ -203,7 +203,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 30</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 31</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um link de acesso.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -419,7 +419,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · versão 30</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · versão 31</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 
 <div class="toast" id="toast" hidden></div>
@@ -458,8 +458,8 @@ function ui(){marcarAtalhos();
 function render(){ui();if(!PRONTO)return;if(GER&&!gerado())pintar();clearTimeout(tm);tm=setTimeout(atualizar,180)}
 let _DISP="";
 function dispId(){if(_DISP)return _DISP;try{_DISP=localStorage.getItem("cm_disp")||""}catch(_){}if(!_DISP){_DISP=(self.crypto&&crypto.randomUUID?crypto.randomUUID():"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,12));try{localStorage.setItem("cm_disp",_DISP)}catch(_){}}return _DISP}
-function bloqueioDisp(msg){$("app").hidden=true;$("gate").hidden=false;$("sair").hidden=true;$("g-form").hidden=true;$("g-code").hidden=true;const m="Olá! Sou "+(EMAIL||"corretor")+" e preciso trocar o aparelho do meu acesso ao Corretor Master.";$("g-msg").innerHTML='<div class="alert crit">'+esc(msg)+'</div><div class="actions"><a class="btn acc" href="https://wa.me/'+FONE_UPG+'?text='+encodeURIComponent(m)+'" target="_blank" rel="noopener">Pedir liberação no WhatsApp</a></div>'}
-async function api(body){body=Object.assign({disp:dispId()},body);const {data,error}=await sb.functions.invoke("smart-endpoint",{body});if(error)throw error;if(data&&data.erro==="dispositivo"){bloqueioDisp(data.msg);const e=new Error("dispositivo");e.msg=data.msg;throw e}if(data&&data.erro==="limite"){const e=new Error("limite");e.msg=data.msg;e.plano=data.plano;throw e}return data}
+function bloqueioDisp(msg,teste){$("app").hidden=true;$("gate").hidden=false;$("sair").hidden=true;$("g-form").hidden=true;$("g-code").hidden=true;const m="Olá! Sou "+(EMAIL||"corretor")+" e preciso trocar o aparelho do meu acesso ao Corretor Master.";if(teste){$("g-msg").innerHTML='<div class="alert crit">'+esc(msg)+'</div><div class="actions"><a class="btn acc" href="'+esc(LINK_ASSINAR||("https://wa.me/"+FONE_UPG))+'" target="_blank" rel="noopener">Assinar o Unlimited (R$ 24,90/mês)</a> <button type="button" class="btn alt" data-ja>Já assinei, liberar meu acesso</button></div><p class="hint">Ao pagar, use o <b>mesmo e-mail do login</b> ('+esc(EMAIL||"")+').</p>';return}$("g-msg").innerHTML='<div class="alert crit">'+esc(msg)+'</div><div class="actions"><a class="btn acc" href="https://wa.me/'+FONE_UPG+'?text='+encodeURIComponent(m)+'" target="_blank" rel="noopener">Pedir liberação no WhatsApp</a></div>'}
+async function api(body){body=Object.assign({disp:dispId()},body);const {data,error}=await sb.functions.invoke("smart-endpoint",{body});if(error)throw error;if(data&&data.erro==="dispositivo"){bloqueioDisp(data.msg,data.teste);const e=new Error("dispositivo");e.msg=data.msg;throw e}if(data&&data.erro==="limite"){const e=new Error("limite");e.msg=data.msg;e.plano=data.plano;throw e}return data}
 async function atualizar(){
   const my=++seq;
   try{const d=await api({acao:"links",S});if(my!==seq)return;LS=d.links;RES=d;pintar();regiao()}
