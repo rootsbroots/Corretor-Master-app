@@ -192,6 +192,8 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 .ent-c{border-top:1px solid var(--line);padding:10px 0}.ent-h{display:flex;justify-content:space-between;gap:8px}.ent-h em{font-style:normal;color:var(--ink-2);font-size:13px}
 .ent-c ul{list-style:none;margin:6px 0;padding:0;font-size:14px}.ent-c li{display:flex;justify-content:space-between;gap:10px;padding:2px 0}.ent-c li span{min-width:0;overflow-wrap:anywhere}.ent-c li b{font-weight:600;text-align:right}
 .ent-c a{font-size:13px}
+#wm{position:fixed;inset:0;z-index:15;pointer-events:none;background-repeat:repeat}
+.termos{font-size:11.5px;color:var(--ink-2);text-align:center;margin:24px auto 110px;max-width:560px;padding-inline:8px;line-height:1.5}
 </style>
 <style>html,body{margin:0}body{min-height:100%}</style>
 </head>
@@ -200,7 +202,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 13</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 14</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um link de acesso.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -212,6 +214,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
       <button class="btn alt" id="g-ok" type="button">Entrar com o código</button>
     </div>
     <div id="g-msg" style="margin-top:12px"></div>
+    <p class="hint" style="margin-top:14px">Uso restrito a corretores autorizados. O conteúdo, os dados e o código são protegidos por direitos autorais. É proibido copiar, reproduzir ou repassar o acesso.</p>
   </div>
 </div>
 <div id="app" hidden>
@@ -414,7 +417,9 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
+<p class="termos">© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
+<div id="wm" aria-hidden="true"></div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -447,11 +452,11 @@ function ui(){marcarAtalhos();
   document.querySelectorAll(".seg:not(.segx)").forEach(g=>g.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(S[g.dataset.k]===b.dataset.v))));
 }
 function render(){ui();if(!PRONTO)return;clearTimeout(tm);tm=setTimeout(atualizar,180)}
-async function api(body){const {data,error}=await sb.functions.invoke("smart-endpoint",{body});if(error)throw error;return data}
+async function api(body){const {data,error}=await sb.functions.invoke("smart-endpoint",{body});if(error)throw error;if(data&&data.erro==="limite"){const e=new Error("limite");e.msg=data.msg;throw e}return data}
 async function atualizar(){
   const my=++seq;
   try{const d=await api({acao:"links",S});if(my!==seq)return;LS=d.links;RES=d;pintar();regiao()}
-  catch(e){if(my===seq)toast("Não foi possível atualizar os links. Tente de novo.")}
+  catch(e){if(my===seq)toast(e&&e.msg?e.msg:"Não foi possível atualizar os links. Tente de novo.",e&&e.msg?6000:0)}
 }
 function pintar(){
   $("avisos").innerHTML=RES.avisos.map(([k,t])=>`<div class="alert ${k}">${esc(t)}</div>`).join("");
@@ -601,7 +606,7 @@ function gerarPdf(){
   txt("Observações para o corretor",12,true,[29,74,53]);y+=1;
   RES.obs.forEach(o=>{txt("- "+o,9,false,[74,93,82]);y+=1.2});
   const n=d.getNumberOfPages();
-  for(let i=1;i<=n;i++){d.setPage(i);d.setFont("helvetica","normal");d.setFontSize(8);d.setTextColor(120,130,125);d.text("Corretor Master · página "+i+" de "+n,M,292)}
+  for(let i=1;i<=n;i++){d.setPage(i);d.setFont("helvetica","normal");d.setFontSize(8);d.setTextColor(120,130,125);d.text("Corretor Master · gerado em "+new Date().toLocaleDateString("pt-BR")+(EMAIL?" por "+EMAIL:"")+" · página "+i+" de "+n,M,292)}
   return d.output("arraybuffer");
 }
 $("pdf").addEventListener("click",async()=>{
@@ -897,13 +902,22 @@ async function entBuscar(){
   $("ent-go").disabled=true;$("ent-msg").innerHTML='<div class="alert good">Consultando o mapa… pode levar alguns segundos.</div>';
   try{
     const d=await api(body);
-    if(d&&d.ok){d.cidade=S.cidade;d.origem=origem;ENT=d;$("ent-msg").innerHTML="";pintarEntorno();pintarConvite();logUso("entorno")}
+    if(d&&d.ok){d.cidade=S.cidade;d.origem=origem;ENT=d;$("ent-msg").innerHTML=(typeof d.restante==="number")?`<p class="hint">Consultas de entorno que restam hoje: ${d.restante}</p>`:"";pintarEntorno();pintarConvite();logUso("entorno")}
     else{const m={nao_achou:"Não encontrei esse endereço. Tente com rua, número e bairro.",geocodificacao:"O serviço de endereços não respondeu. Tente de novo em instantes.",servico:"O serviço de mapas está ocupado. Tente de novo em instantes.",sem_local:"Digite um endereço ou escolha um bairro."}[d&&d.erro]||"Não foi possível consultar o entorno.";
       $("ent-msg").innerHTML='<div class="alert warn">'+esc(m)+'</div>'}
-  }catch(e){$("ent-msg").innerHTML='<div class="alert warn">Não foi possível consultar o entorno. Tente de novo.</div>'}
+  }catch(e){$("ent-msg").innerHTML='<div class="alert warn">'+esc(e&&e.msg?e.msg:"Não foi possível consultar o entorno. Tente de novo.")+'</div>'}
   $("ent-go").disabled=false;
 }
 
+
+/* ---------- proteção: marca d'água e limites ---------- */
+function marcaDagua(email){
+  const w=$("wm");if(!w)return;
+  if(!email){w.style.backgroundImage="none";return}
+  const t=String(email).replace(/[<>&"']/g,"");
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200"><text x="160" y="100" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="rgb(128,128,128)" fill-opacity="0.16" transform="rotate(-25 160 100)">${t}</text></svg>`;
+  w.style.backgroundImage="url(\"data:image/svg+xml;utf8,"+encodeURIComponent(svg)+"\")";
+}
 /* ---------- acesso (Supabase) ---------- */
 const SB_URL="https://ccaccwjolrdabubzplnb.supabase.co", SB_KEY="sb_publishable_hJXQYLu4m474caKIRYu41g_z34AyrgL";
 if(!window.supabase){$("gate").hidden=false;$("g-form").hidden=true;gmsg0("Não foi possível carregar o acesso. Verifique a internet e recarregue.")}
@@ -914,7 +928,7 @@ const gmsg=(k,t)=>{$("g-msg").innerHTML=t?`<div class="alert ${k}">${esc(t)}</di
 let CARGA=null;
 async function carregar(){const c=await api({acao:"catalogo"});CIDADES=c.cidades;BAIRROS=c.bairros;CONDOS=c.condos;PARQUES=c.parques;PRONTO=true;fillSelects();syncInputs();render();recentes()}
 function limparDados(){ENT=null;ENTLOC=null;CONV_EDIT=false;REG=null;REGC={};PRONTO=false;CARGA=null;CIDADES=[{n:"Goiânia",s:"goiania"}];BAIRROS=[];CONDOS={};PARQUES=[];LS=[]}
-function mostrarGate(){limparDados();$("app").hidden=true;$("gate").hidden=false;$("sair").hidden=true;$("g-form").hidden=false;$("g-code").hidden=true}
+function mostrarGate(){limparDados();marcaDagua("");$("app").hidden=true;$("gate").hidden=false;$("sair").hidden=true;$("g-form").hidden=false;$("g-code").hidden=true}
 async function logUso(acao){if(!EMAIL)return;try{await sb.from("uso").insert({email:EMAIL,acao})}catch(_){}}
 async function checar(session){
   if(!session){EMAIL=null;mostrarGate();return}
@@ -923,7 +937,7 @@ async function checar(session){
   try{const {data,error}=await sb.rpc("is_authorized");
     ok=!error&&data===true;
     det=error?("erro: "+(error.code||"")+" "+(error.message||"")):("retorno="+String(data))}catch(e){det="excecao: "+(e&&e.message)}
-  if(!ok){limparDados();EMAIL=null;$("app").hidden=true;$("gate").hidden=false;$("g-form").hidden=true;
+  if(!ok){limparDados();marcaDagua("");EMAIL=null;$("app").hidden=true;$("gate").hidden=false;$("g-form").hidden=true;
     gmsg("crit","Este e-mail ("+email+") não está autorizado. Fale com quem te enviou o acesso.");
     $("g-msg").insertAdjacentHTML("beforeend",'<p class="hint">Detalhe técnico: '+esc(det)+'</p>');
     $("g-msg").insertAdjacentHTML("beforeend",'<div class="actions"><button class="btn alt" id="g-out" type="button">Sair</button></div>');
@@ -936,7 +950,7 @@ async function checar(session){
       $("g-msg").insertAdjacentHTML("beforeend",'<p class="hint">Detalhe técnico: '+esc((e&&e.message)||String(e))+'</p><div class="actions"><button class="btn" id="g-re" type="button">Tentar de novo</button> <button class="btn alt" id="g-out" type="button">Sair</button></div>');
       $("g-re").onclick=()=>location.reload();$("g-out").onclick=()=>sb.auth.signOut();return}
   }
-  $("gate").hidden=true;$("app").hidden=false;$("sair").hidden=false;
+  $("gate").hidden=true;$("app").hidden=false;$("sair").hidden=false;marcaDagua(email);
   if(!era)logUso("entrou");
 }
 $("g-go").addEventListener("click",async()=>{
