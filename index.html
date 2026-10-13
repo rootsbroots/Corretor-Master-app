@@ -203,7 +203,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 20</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 21</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um link de acesso.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -419,7 +419,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><b>Corretor Master · versão 20</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><span id="meuplano" class="hint"></span><br><b>Corretor Master · versão 21</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 <div id="wm" aria-hidden="true"></div>
 <div class="toast" id="toast" hidden></div>
@@ -954,6 +954,7 @@ function upgUrl(p){
   const m=`Olá! Sou ${EMAIL||"corretor"} e uso o Corretor Master${pl?" no plano "+pl:""}. Quero fazer upgrade para ${alvo}. Pode me passar como faço?`;
   return "https://wa.me/"+FONE_UPG+"?text="+encodeURIComponent(m);
 }
+async function verPlano(){try{const d=await api({acao:"meu_plano"});if(!d||!d.plano)return;PLANO_ATUAL=d.plano;setUpg();const e=$("meuplano");if(e)e.textContent="Seu plano: "+d.plano+" · buscas hoje: "+d.usadas+(d.limite===null?" (ilimitado)":"/"+d.limite)}catch(_){}}
 function setUpg(){const a=$("upg");if(a)a.href=upgUrl()}
 
 
@@ -965,7 +966,7 @@ $("portais").addEventListener("click",async e=>{
   try{
     const d=await api({acao:"gerar",S});
     if(chave!==skey()){b.disabled=false;return}
-    GER={key:chave,res:d};pintar();logUso("gerar");
+    GER={key:chave,res:d};pintar();logUso("gerar");verPlano();
     if(typeof d.restante==="number")toast("Buscas que restam hoje: "+d.restante,3000);
   }catch(er){
     b.disabled=false;
@@ -1013,7 +1014,7 @@ async function checar(session){
       $("g-msg").insertAdjacentHTML("beforeend",'<p class="hint">Detalhe técnico: '+esc((e&&e.message)||String(e))+'</p><div class="actions"><button class="btn" id="g-re" type="button">Tentar de novo</button> <button class="btn alt" id="g-out" type="button">Sair</button></div>');
       $("g-re").onclick=()=>location.reload();$("g-out").onclick=()=>sb.auth.signOut();return}
   }
-  $("gate").hidden=true;$("app").hidden=false;$("sair").hidden=false;marcaDagua(email);setUpg();
+  $("gate").hidden=true;$("app").hidden=false;$("sair").hidden=false;marcaDagua(email);setUpg();verPlano();
   if(!era)logUso("entrou");
 }
 $("g-go").addEventListener("click",async()=>{
