@@ -212,15 +212,17 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 .fotos .ft{position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:var(--surface-2)}
 .fotos .ft img{width:100%;height:100%;object-fit:cover;display:block}
 .fotos .ft button{position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;font-size:16px;line-height:1;cursor:pointer}
-.vip{--gold:#c9a96a;--gold-2:#e9d8b4;--gold-ink:#2b2113;display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;border:0;border-radius:18px;padding:14px 16px;min-height:64px;color:var(--gold-ink);background:linear-gradient(135deg,var(--gold-2),var(--gold));box-shadow:0 6px 18px rgba(201,169,106,.28);font:inherit}
-.vip:hover{filter:brightness(1.04)}.vip:active{transform:translateY(1px)}
-.vip .vi{flex:none;width:40px;height:40px;border-radius:12px;background:rgba(42,33,0,.12);display:grid;place-items:center}
-.vip .vi svg{width:22px;height:22px;stroke:var(--gold-ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.vip{--vc:#8c6d34;display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;border:1.5px solid var(--vc);border-radius:12px;padding:14px 16px;min-height:64px;color:var(--ink);background:transparent;font:inherit;transition:background .15s}
+:root[data-theme="dark"] .vip{--vc:#d8c39a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .vip{--vc:#d8c39a}}
+.vip:hover{background:color-mix(in srgb,var(--vc) 12%,transparent)}.vip:active{transform:translateY(1px)}
+.vip .vi{flex:none;width:28px;height:28px;display:grid;place-items:center;color:var(--vc)}
+.vip .vi svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .vip .vt{flex:1;min-width:0}
-.vip .vt small{display:block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
-.vip .vt b{display:block;font-size:17px;line-height:1.2;font-weight:800;margin:1px 0}
-.vip .vt span{display:block;font-size:12.5px;opacity:.82}
-.vip .va{flex:none;font-size:22px;font-weight:700}
+.vip .vt small{display:block;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--vc)}
+.vip .vt b{display:block;font-size:17px;line-height:1.2;font-weight:700;margin:1px 0}
+.vip .vt span{display:block;font-size:12.5px;color:var(--ink-2)}
+.vip .va{flex:none;font-size:22px;font-weight:400;color:var(--vc)}
 .vipw{margin-block:2px 14px}
 .vip.vs{min-height:56px;padding:10px 14px;margin-top:12px}
 .modal .eyebrow{margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#b88a00}
@@ -251,7 +253,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.43</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.44</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um e-mail com um <b>código de 6 números</b> e um botão para entrar.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -496,7 +498,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.43</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.44</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 
 <div class="modal" id="anm" hidden role="dialog" aria-modal="true" aria-labelledby="an-t">
