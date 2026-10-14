@@ -203,14 +203,14 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 33</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 34</p>
     <div id="g-form">
-      <p>Digite seu e-mail. Enviaremos um link de acesso.</p>
+      <p>Digite seu e-mail. Enviaremos um e-mail com um <b>código de 6 números</b> e um botão para entrar.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
-      <button class="btn" id="g-go" type="button">Receber link de acesso</button>
+      <button class="btn" id="g-go" type="button">Receber código de acesso</button>
     </div>
     <div id="g-code" hidden style="margin-top:14px">
-      <p>Se o e-mail trouxer um código de 6 números, digite aqui (útil no app instalado):</p>
+      <p>Digite o <b>código de 6 números</b> do e-mail (ou toque no botão <b>Entrar</b> do próprio e-mail, neste mesmo aparelho).</p>
       <div class="f"><label for="g-tok">Código</label><input type="text" id="g-tok" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="123456"></div>
       <button class="btn alt" id="g-ok" type="button">Entrar com o código</button>
     </div>
@@ -419,7 +419,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · versão 33</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · versão 34</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 
 <div class="toast" id="toast" hidden></div>
@@ -1036,10 +1036,10 @@ $("g-go").addEventListener("click",async()=>{
   try{
     const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:true}});
     if(error)throw error;
-    $("g-form").hidden=true;$("g-code").hidden=false;GMAIL=email;gmsg("good","Enviamos um link para "+email+". Abra o e-mail neste mesmo aparelho e toque no link. Veja também o spam.");
+    $("g-form").hidden=true;$("g-code").hidden=false;GMAIL=email;gmsg("good","Enviamos um e-mail para "+email+". Digite abaixo o código de 6 números. Se não chegar em 1 minuto, confira o <b>spam</b> e a aba <b>Promoções</b>.");
   }catch(e){
     $("g-go").disabled=false;
-    gmsg("crit",/rate|limit/i.test(String(e&&e.message))?"Muitos pedidos de link. Espere alguns minutos e tente de novo.":"Não foi possível enviar o link. Tente de novo.");
+    gmsg("crit",/rate|limit/i.test(String(e&&e.message))?"Muitos pedidos de código. Espere alguns minutos e tente de novo.":"Não foi possível enviar o código. Tente de novo.");
   }
 });
 let GMAIL="";
@@ -1048,7 +1048,7 @@ $("g-ok").addEventListener("click",async()=>{
   if(token.length<6){gmsg("warn","Digite o código de 6 números do e-mail.");return}
   $("g-ok").disabled=true;
   try{const {error}=await sb.auth.verifyOtp({email:GMAIL,token,type:"email"});if(error)throw error;gmsg("","")}
-  catch(e){gmsg("crit","Código inválido ou vencido. Peça um novo link.")}
+  catch(e){gmsg("crit","Código inválido ou vencido. Volte e peça um novo código.")}
   $("g-ok").disabled=false;
 });
 $("sair").addEventListener("click",()=>sb&&sb.auth.signOut());
