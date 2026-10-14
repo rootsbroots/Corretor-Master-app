@@ -230,6 +230,19 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 .modal ol.pas li{counter-increment:p;display:flex;gap:12px;align-items:center;font-size:15px}
 .modal ol.pas li::before{content:counter(p);flex:none;width:28px;height:28px;border-radius:50%;background:#f2b705;color:#2a2100;font-weight:800;display:grid;place-items:center;font-size:14px}
 .alink{background:none;border:0;color:var(--brand);font-weight:600;text-decoration:underline;cursor:pointer;padding:6px 0;font-size:14px}
+/* vitrine alto padrão */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vimv{background:var(--surface-2);border-radius:18px;overflow:hidden;margin-block:12px;border:1px solid var(--line)}
+.vt-capa{aspect-ratio:16/9;width:100%;object-fit:cover;display:block;background:linear-gradient(135deg,#ffd75e,#f2b705)}
+.vt-capa.ph{display:flex;align-items:center;justify-content:center;color:#2a2100;font-weight:800;letter-spacing:.1em;font-size:12px}
+.vt-c{padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.vt-c h3{margin:0;font-size:18px;line-height:1.25;text-transform:none;letter-spacing:0;color:var(--ink);font-weight:700;text-wrap:balance}
+.vt-v{font-weight:800;font-size:20px;color:#f2b705}
+.vt-t{display:flex;flex-wrap:wrap;gap:6px}
+.vt-t span{background:var(--surface);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}
+.vt-d{white-space:pre-line;color:var(--ink-2);font-size:14px}
+.vt-x{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.vt-c .btn{min-height:40px;padding:8px 16px;font-size:14px}
 </style>
 <style>html,body{margin:0}body{min-height:100%}</style>
 </head>
@@ -238,7 +251,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.40</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.41</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um e-mail com um <b>código de 6 números</b> e um botão para entrar.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -266,7 +279,34 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
     <button role="tab" data-tab="link" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 005.6 0l3-3a4 4 0 00-5.6-5.6l-1 1"/><path d="M14 10a4 4 0 00-5.6 0l-3 3a4 4 0 005.6 5.6l1-1"/></svg><span>Link</span></button>
     <button role="tab" data-tab="clientes" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0"/><path d="M16 4.5a3.5 3.5 0 010 7M18.5 14.5A6.5 6.5 0 0121.5 20"/></svg><span>Clientes <b id="cnt" style="font-weight:600"></b></span></button>
     <button role="tab" data-tab="calc" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></svg><span>Calculadora</span></button>
+    <button role="tab" data-tab="vitrine" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M12 14l1.2 1.9 2.1.5-1.5 1.5.3 2.1-2.1-1-2.1 1 .3-2.1-1.5-1.5 2.1-.5z"/></svg><span>Alto padrão</span></button>
   </nav>
+
+  <section id="tab-vitrine" hidden>
+    <h2>Alto padrão</h2>
+    <p class="hint">Imóveis selecionados, a partir de R$ 3,5 milhões. Toque para ver detalhes, álbum e vídeo.</p>
+    <div id="vt-admin" hidden>
+      <div class="actions"><button class="btn" id="vt-novo" type="button">+ Publicar imóvel</button></div>
+      <form id="vt-form" hidden autocomplete="off">
+        <input type="hidden" id="vt-id">
+        <div class="f"><label for="vt-titulo">Título</label><input type="text" id="vt-titulo" maxlength="120" placeholder="Casa de 5 suítes no Alphaville Flamboyant"></div>
+        <div class="row2"><div class="f"><label for="vt-cidade">Cidade</label><input type="text" id="vt-cidade" value="Goiânia"></div><div class="f"><label for="vt-bairro">Bairro / condomínio</label><input type="text" id="vt-bairro"></div></div>
+        <div class="row2"><div class="f"><label for="vt-tipo">Tipo</label><select id="vt-tipo"><option value="casa">Casa</option><option value="apto">Apartamento</option></select></div><div class="f"><label for="vt-sit">Situação</label><select id="vt-sit"><option value="novo">Novo</option><option value="usado">Usado</option><option value="obra">Em obra</option></select></div></div>
+        <div class="row2"><div class="f"><label for="vt-valor">Valor (R$)</label><input type="text" inputmode="numeric" id="vt-valor" placeholder="4.500.000"></div><div class="f"><label for="vt-area">Área (m²)</label><input type="text" inputmode="numeric" id="vt-area"></div></div>
+        <div class="row2"><div class="f"><label for="vt-q">Quartos</label><input type="text" inputmode="numeric" id="vt-q"></div><div class="f"><label for="vt-s">Suítes</label><input type="text" inputmode="numeric" id="vt-s"></div></div>
+        <div class="f"><label for="vt-v">Vagas</label><input type="text" inputmode="numeric" id="vt-v"></div>
+        <div class="f"><label for="vt-desc">Descrição</label><textarea id="vt-desc" maxlength="4000" style="font-family:inherit;font-size:15px"></textarea></div>
+        <div class="f"><label for="vt-capa">Foto de capa (link direto da imagem, opcional)</label><input type="text" id="vt-capa" inputmode="url" placeholder="https://..."></div>
+        <div class="f"><label for="vt-album">Link do álbum de fotos (Drive, Instagram...)</label><input type="text" id="vt-album" inputmode="url" placeholder="https://..."></div>
+        <div class="f"><label for="vt-video">Link do vídeo (YouTube, Instagram...)</label><input type="text" id="vt-video" inputmode="url" placeholder="https://..."></div>
+        <div class="f"><label for="vt-fase">Fase da obra (se for o caso)</label><input type="text" id="vt-fase" maxlength="300" placeholder="Acabamento"></div>
+        <div class="f"><label for="vt-ent">Previsão de entrega</label><input type="text" id="vt-ent" maxlength="60" placeholder="Dezembro/2027"></div>
+        <label style="display:flex;gap:8px;align-items:center;margin-block:8px"><input type="checkbox" id="vt-pub" checked> Publicado (visível aos corretores)</label>
+        <div class="actions"><button class="btn acc" id="vt-salvar" type="submit">Salvar</button><button class="btn alt" id="vt-cancel" type="button">Cancelar</button></div>
+      </form>
+    </div>
+    <div id="vt-lista"><p class="hint">Carregando…</p></div>
+  </section>
 
   <section id="tab-calc" hidden>
     <div class="calc-g">
@@ -456,7 +496,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.40</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.41</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 
 <div class="modal" id="anm" hidden role="dialog" aria-modal="true" aria-labelledby="an-t">
@@ -583,10 +623,57 @@ try{const t=localStorage.getItem("cm-theme");document.documentElement.dataset.th
 /* abas */
 function tab(n){window.scrollTo(0,0);
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===n)));
-  ["busca","link","clientes","calc"].forEach(t=>$("tab-"+t).hidden=t!==n);
+  ["busca","link","clientes","calc","vitrine"].forEach(t=>$("tab-"+t).hidden=t!==n);
   if(n==="clientes")listar();
+  if(n==="vitrine")vtCarregar();
 }
 document.querySelector("nav").addEventListener("click",e=>{const b=e.target.closest("button");if(b)tab(b.dataset.tab)});
+
+
+/* vitrine alto padrão */
+let VT_ADMIN=false,VT_ITENS=[];
+const brlv=n=>n?"R$ "+Number(n).toLocaleString("pt-BR"):"";
+const linkOk=u=>/^https:\/\//i.test(u||"")?esc(u):"";
+function vtDesenhar(){
+  const L=$("vt-lista");
+  if(!VT_ITENS.length){L.innerHTML='<p class="hint">Em breve, novos imóveis de alto padrão por aqui.</p>';return}
+  L.innerHTML=VT_ITENS.map(i=>{
+    const tags=[i.tipo==="casa"?"Casa":i.tipo==="apto"?"Apartamento":"",i.situacao==="novo"?"Novo":i.situacao==="usado"?"Usado":i.situacao==="obra"?"Em obra":"",i.area_m2?i.area_m2+" m²":"",i.quartos?i.quartos+" quartos":"",i.suites?i.suites+" suítes":"",i.vagas?i.vagas+" vagas":""].filter(Boolean).map(t=>"<span>"+esc(t)+"</span>").join("");
+    const capa=linkOk(i.capa)?'<img class="vt-capa" src="'+linkOk(i.capa)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':'<div class="vt-capa ph">ALTO PADRÃO</div>';
+    const local=[i.bairro,i.cidade].filter(Boolean).map(esc).join(" · ");
+    return '<article class="vimv" data-id="'+esc(i.id)+'">'+capa+'<div class="vt-c">'+(i.publicado===false?'<span class="tag">RASCUNHO (só você vê)</span>':"")+'<h3>'+esc(i.titulo)+'</h3>'+(local?'<div class="hint">'+local+'</div>':"")+(i.valor?'<div class="vt-v">'+brlv(i.valor)+'</div>':"")+'<div class="vt-t">'+tags+'</div>'+(i.fase_obra?'<div class="hint"><b>Fase da obra:</b> '+esc(i.fase_obra)+(i.entrega?' · entrega '+esc(i.entrega):'')+'</div>':(i.entrega?'<div class="hint">Entrega: '+esc(i.entrega)+'</div>':""))+(i.descricao?'<div class="vt-d">'+esc(i.descricao)+'</div>':"")+'<div class="vt-x">'+(linkOk(i.album)?'<a class="btn" href="'+linkOk(i.album)+'" target="_blank" rel="noopener">Ver fotos</a>':"")+(linkOk(i.video)?'<a class="btn alt" href="'+linkOk(i.video)+'" target="_blank" rel="noopener">Ver vídeo</a>':"")+(VT_ADMIN?'<button class="btn alt" data-ed="'+esc(i.id)+'" type="button">Editar</button><button class="btn alt" data-ex="'+esc(i.id)+'" type="button">Excluir</button>':"")+'</div></div></article>';
+  }).join("");
+}
+async function vtCarregar(){
+  try{const r=await api({acao:"vitrine_listar"});
+    if(!r||!r.ok){$("vt-lista").innerHTML='<p class="hint">'+esc((r&&r.msg)||"Vitrine indisponível no momento.")+'</p>';return}
+    VT_ADMIN=!!r.admin;VT_ITENS=r.itens||[];$("vt-admin").hidden=!VT_ADMIN;vtDesenhar()}
+  catch(e){if(!(e&&e.message==="dispositivo"))$("vt-lista").innerHTML='<p class="hint">Não foi possível carregar. Tente de novo.</p>'}
+}
+function vtForm(i){
+  i=i||{};const set=(k,v)=>$(k).value=v==null?"":v;
+  set("vt-id",i.id);set("vt-titulo",i.titulo);set("vt-cidade",i.cidade||"Goiânia");set("vt-bairro",i.bairro);set("vt-tipo",i.tipo||"casa");set("vt-sit",i.situacao||"novo");
+  set("vt-valor",i.valor?Number(i.valor).toLocaleString("pt-BR"):"");set("vt-area",i.area_m2);set("vt-q",i.quartos);set("vt-s",i.suites);set("vt-v",i.vagas);
+  set("vt-desc",i.descricao);set("vt-capa",i.capa);set("vt-album",i.album);set("vt-video",i.video);set("vt-fase",i.fase_obra);set("vt-ent",i.entrega);
+  $("vt-pub").checked=i.publicado!==false;$("vt-form").hidden=false;$("vt-form").scrollIntoView({behavior:"smooth",block:"start"});
+}
+$("vt-novo").onclick=()=>vtForm();
+$("vt-cancel").onclick=()=>{$("vt-form").hidden=true};
+$("vt-form").addEventListener("submit",async e=>{e.preventDefault();
+  const g=k=>$(k).value.trim();
+  const item={id:g("vt-id")||undefined,titulo:g("vt-titulo"),cidade:g("vt-cidade"),bairro:g("vt-bairro"),tipo:g("vt-tipo"),situacao:g("vt-sit"),valor:g("vt-valor"),area_m2:g("vt-area"),quartos:g("vt-q"),suites:g("vt-s"),vagas:g("vt-v"),descricao:g("vt-desc"),capa:g("vt-capa"),album:g("vt-album"),video:g("vt-video"),fase_obra:g("vt-fase"),entrega:g("vt-ent"),publicado:$("vt-pub").checked};
+  if(!item.titulo){toast("Informe o título.");return}
+  for(const k of ["capa","album","video"])if(item[k]&&!/^https:\/\//i.test(item[k])){toast("O link de "+k+" precisa começar com https://",4000);return}
+  $("vt-salvar").disabled=true;
+  try{const r=await api({acao:"vitrine_salvar",item});if(r&&r.ok){toast("Salvo.");$("vt-form").hidden=true;await vtCarregar()}else toast((r&&r.msg)||"Não foi possível salvar.",4000)}
+  catch(err){toast("Não foi possível salvar.",4000)}
+  $("vt-salvar").disabled=false});
+$("vt-lista").addEventListener("click",async e=>{
+  const ed=e.target.closest("[data-ed]"),ex=e.target.closest("[data-ex]");
+  if(ed){vtForm(VT_ITENS.find(i=>i.id===ed.dataset.ed));return}
+  if(ex){if(ex.dataset.sure!=="1"){ex.dataset.sure="1";ex.textContent="Confirmar exclusão";setTimeout(()=>{ex.dataset.sure="";ex.textContent="Excluir"},4000);return}
+    try{const r=await api({acao:"vitrine_excluir",id:ex.dataset.ex});if(r&&r.ok){toast("Excluído.");vtCarregar()}else toast((r&&r.msg)||"Erro ao excluir.",4000)}catch(_){toast("Erro ao excluir.",4000)}}
+});
 
 /* clientes (neste aparelho) */
 function load(){try{return JSON.parse(localStorage.getItem("cm-clientes")||"[]")}catch(_){return[]}}
