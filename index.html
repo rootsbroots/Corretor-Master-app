@@ -223,6 +223,12 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 .vip .va{flex:none;font-size:22px;font-weight:700}
 .vipw{margin-block:2px 14px}
 .vip.vs{min-height:56px;padding:10px 14px;margin-top:12px}
+.modal .eyebrow{margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#b88a00}
+.modal h2{font-size:21px;line-height:1.25;text-wrap:balance}
+.modal ol.pas{margin:10px 0 0;padding-left:0;list-style:none;counter-reset:p;display:grid;gap:8px}
+.modal ol.pas li span{min-width:0}
+.modal ol.pas li{counter-increment:p;display:flex;gap:12px;align-items:center;font-size:15px}
+.modal ol.pas li::before{content:counter(p);flex:none;width:28px;height:28px;border-radius:50%;background:#f2b705;color:#2a2100;font-weight:800;display:grid;place-items:center;font-size:14px}
 .alink{background:none;border:0;color:var(--brand);font-weight:600;text-decoration:underline;cursor:pointer;padding:6px 0;font-size:14px}
 </style>
 <style>html,body{margin:0}body{min-height:100%}</style>
@@ -232,7 +238,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">versão 39</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.40</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um e-mail com um <b>código de 6 números</b> e um botão para entrar.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -450,46 +456,24 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · versão 39</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.40</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 
 <div class="modal" id="anm" hidden role="dialog" aria-modal="true" aria-labelledby="an-t">
   <div class="panel">
-    <div class="mh"><div><h2 id="an-t">Anuncie seu imóvel aqui</h2><p class="lead">Casas e apartamentos de <b>alto padrão</b>, a partir de R$ 3.500.000. Para construtoras, proprietários e corretores, de imóveis novos ou usados. Avaliamos cada anúncio e entramos em contato.</p></div><button class="x" id="an-x" type="button" aria-label="Fechar">&times;</button></div>
-    <div id="an-form">
-      <div class="f"><label>Quem está anunciando?</label>
-        <div class="seg segx" id="an-quem"><button type="button" data-v="proprietario" aria-pressed="true">Proprietário</button><button type="button" data-v="construtora" aria-pressed="false">Construtora</button><button type="button" data-v="corretor" aria-pressed="false">Corretor</button></div></div>
-      <div class="f"><label for="an-nome">Nome</label><input type="text" id="an-nome" autocomplete="name" maxlength="80"></div>
-      <div class="row"><div class="f"><label for="an-tel">WhatsApp / telefone</label><input type="text" id="an-tel" inputmode="tel" autocomplete="tel" placeholder="(62) 9 0000-0000" maxlength="20"></div>
-      <div class="f"><label for="an-email">E-mail (opcional)</label><input type="text" id="an-email" inputmode="email" autocomplete="email" maxlength="120"></div></div>
-      <div class="f" id="an-creci-f" hidden><label for="an-creci">CRECI (opcional)</label><input type="text" id="an-creci" maxlength="20"></div>
-      <div class="f"><label>Situação do imóvel</label>
-        <div class="seg segx" id="an-sit"><button type="button" data-v="usado" aria-pressed="true">Usado (já morei)</button><button type="button" data-v="novo" aria-pressed="false">Novo / lançamento</button></div></div>
-      <div id="an-obra" hidden>
-        <div class="row"><div class="f"><label for="an-fase">Fase da obra</label><select id="an-fase"><option value="planta">Na planta</option><option value="fundacao">Fundação</option><option value="estrutura">Estrutura</option><option value="alvenaria">Alvenaria</option><option value="acabamento">Acabamento</option><option value="pronto">Pronto / entregue</option></select></div>
-        <div class="f"><label for="an-ent">Previsão de entrega</label><input type="text" id="an-ent" placeholder="ex.: dez/2027" maxlength="30"></div></div>
-      </div>
-      <div class="row"><div class="f"><label for="an-tipo">Tipo do imóvel</label><select id="an-tipo"><option value="casa">Casa</option><option value="casa_condominio">Casa em condomínio</option><option value="apartamento">Apartamento</option><option value="cobertura">Cobertura</option></select></div>
-      <div class="f"><label for="an-valor">Valor (R$)</label><input type="text" id="an-valor" inputmode="numeric" placeholder="4.500.000" maxlength="16"></div></div>
-      <div class="row"><div class="f"><label for="an-cidade">Cidade</label><input type="text" id="an-cidade" value="Goiânia" maxlength="60"></div>
-      <div class="f"><label for="an-bairro">Bairro / condomínio</label><input type="text" id="an-bairro" maxlength="80"></div></div>
-      <div class="f"><label for="an-desc">Descrição</label><textarea id="an-desc" maxlength="800" placeholder="Metragem, suítes, vagas, diferenciais, andar/condomínio. Se for novo: pronto, em obra ou na planta."></textarea></div>
-      <div class="f"><label>Fotos do imóvel (até 6, opcional)</label>
-        <input type="file" id="an-fotos" accept="image/jpeg,image/png,image/webp" multiple hidden>
-        <button class="btn alt" id="an-fotos-bt" type="button">Escolher fotos</button>
-        <div class="fotos" id="an-fotos-l"></div>
-        <p class="hint">Fotos nítidas de fachada, sala e áreas de lazer ajudam na avaliação. Elas são reduzidas automaticamente.</p></div>
-      <div class="f"><label for="an-link">Link de vídeo, anúncio ou mais fotos (opcional)</label><input type="text" id="an-link" inputmode="url" maxlength="300" placeholder="https://"><p class="hint">Vídeos curtos da casa ou do andamento da obra: cole o link do YouTube, Instagram ou Google Drive.</p></div>
-      <input type="text" class="hp" id="an-site" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <label class="chk"><input type="checkbox" id="an-ok"><span>Autorizo o contato pelos dados informados e o uso deles para avaliar o anúncio, conforme os <a href="termos.html" target="_blank" rel="noopener">termos e a política de privacidade</a>.</span></label>
-      <div id="an-msg" style="margin-top:12px"></div>
-      <div class="actions"><button class="btn acc" id="an-go" type="button">Enviar anúncio</button><button class="btn alt" id="an-cancel" type="button">Cancelar</button></div>
-      <p class="hint" style="margin-top:12px">O envio não garante a publicação e não cria contrato. Avaliamos cada imóvel antes de qualquer divulgação. Eventual comissão de corretagem só existe mediante contrato escrito, conforme os <a href="termos.html#anuncios" target="_blank" rel="noopener">termos</a>.</p>
-    </div>
-    <div id="an-done" hidden>
-      <div class="alert good">Recebemos seu anúncio. Entraremos em contato pelo telefone informado depois da avaliação.</div>
-      <div class="actions"><button class="btn" id="an-fim" type="button">Fechar</button></div>
-    </div>
+    <div class="mh"><div><p class="eyebrow">Alto padrão</p><h2 id="an-t">Bem-vindo à plataforma que fecha os melhores negócios</h2></div><button class="x" id="an-x" type="button" aria-label="Fechar">&times;</button></div>
+    <div class="alert warn" style="margin-top:6px"><b>Atenção:</b> este canal é exclusivo para <b>proprietários e construtores</b> de imóveis de alto padrão. Casas e apartamentos, novos ou usados, a partir de <b>R$ 3.500.000</b>.</div>
+    <p class="lead">Seu imóvel não será mais um anúncio perdido na multidão. Ele é apresentado a corretores selecionados, que atuam no alto padrão e sabem conduzir negociações desse nível, com fotos e texto feitos por profissionais.</p>
+    <ol class="pas">
+      <li><span><b>Fale com a gente</b> pelo WhatsApp.</span></li>
+      <li><span><b>Avaliamos</b> o seu imóvel.</span></li>
+      <li><span><b>Visitamos</b> o imóvel e fazemos as fotos e a descrição.</span></li>
+      <li><span><b>Publicamos</b> somente com a sua autorização.</span></li>
+    </ol>
+    <div class="f" style="margin-top:14px"><label>Quem é você?</label>
+      <div class="seg segx" id="an-quem"><button type="button" data-v="proprietario" aria-pressed="true">Proprietário</button><button type="button" data-v="construtora" aria-pressed="false">Construtora</button></div></div>
+    <div class="actions"><a class="btn" id="an-wa" href="#" target="_blank" rel="noopener" style="background:#25d366;color:#06220f">Falar no WhatsApp</a><button class="btn alt" id="an-cancel" type="button">Agora não</button></div>
+    <p class="hint" style="margin-top:12px">Se o WhatsApp não abrir, chame o <b>(62) 98250-5081</b>. Nada é publicado sem a sua autorização, e eventual comissão de corretagem só existe mediante contrato escrito, conforme os <a href="termos.html#anuncios" target="_blank" rel="noopener">termos</a>.</p>
   </div>
 </div>
 <div class="toast" id="toast" hidden></div>
@@ -1129,83 +1113,23 @@ $("g-ok").addEventListener("click",async()=>{
   $("g-ok").disabled=false;
 });
 $("sair").addEventListener("click",sair);
-/* ---------- anuncie seu imóvel (formulário público) ---------- */
+/* ---------- anuncie seu imóvel (conversa no WhatsApp) ---------- */
 (function(){
-  const MIN=3500000; let QUEM="proprietario", SIT="usado", ENV=false, FOTOS=[];
-  const MAXF=6;
-  const uuid=()=>(window.crypto&&crypto.randomUUID)?crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx".replace(/[x]/g,()=>(Math.random()*16|0).toString(16));
-  async function comprimir(file){
-    const bmp=await createImageBitmap(file);
-    const k=Math.min(1,1600/Math.max(bmp.width,bmp.height));
-    const c=document.createElement("canvas");c.width=Math.max(1,Math.round(bmp.width*k));c.height=Math.max(1,Math.round(bmp.height*k));
-    c.getContext("2d").drawImage(bmp,0,0,c.width,c.height);
-    return await new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(new Error("img")),"image/jpeg",0.82));
-  }
-  function desenhaFotos(){
-    const l=$("an-fotos-l");l.innerHTML="";
-    FOTOS.forEach((f,i)=>{const d=document.createElement("div");d.className="ft";
-      const im=document.createElement("img");im.src=f.url;im.alt="Foto "+(i+1);
-      const x=document.createElement("button");x.type="button";x.textContent="\u00d7";x.setAttribute("aria-label","Remover foto "+(i+1));
-      x.onclick=()=>{try{URL.revokeObjectURL(f.url)}catch(_){}FOTOS.splice(i,1);desenhaFotos()};
-      d.appendChild(im);d.appendChild(x);l.appendChild(d)});
-    $("an-fotos-bt").textContent=FOTOS.length?("Adicionar mais fotos ("+FOTOS.length+"/"+MAXF+")"):"Escolher fotos";
-    $("an-fotos-bt").disabled=FOTOS.length>=MAXF;
-  }
-  function limpaFotos(){FOTOS.forEach(f=>{try{URL.revokeObjectURL(f.url)}catch(_){}});FOTOS=[];desenhaFotos()}
-  const m=()=>$("an-msg"), msg=(k,t)=>{m().innerHTML=t?`<div class="alert ${k}">${esc(t)}</div>`:""};
-  function abrir(){ENV=false;$("an-form").hidden=false;$("an-done").hidden=true;msg("","");$("anm").hidden=false;document.body.style.overflow="hidden";setTimeout(()=>{try{if(!$("anm").contains(document.activeElement))$("an-nome").focus()}catch(_){}},50)}
+  const ZAP="5562982505081";
+  const TXT={
+    proprietario:"Olá! Sou proprietário de um imóvel de alto padrão e quero anunciar no Corretor Master. Podemos conversar?",
+    construtora:"Olá! Represento uma construtora e quero anunciar imóveis de alto padrão no Corretor Master. Podemos conversar?"};
+  let QUEM="proprietario";
+  const link=()=>{$("an-wa").href="https://wa.me/"+ZAP+"?text="+encodeURIComponent(TXT[QUEM])};
+  function abrir(){link();$("anm").hidden=false;document.body.style.overflow="hidden"}
   function fechar(){$("anm").hidden=true;document.body.style.overflow=""}
   $("anunciar").addEventListener("click",abrir);$("g-anunciar").addEventListener("click",abrir);
-  $("an-fotos-bt").addEventListener("click",()=>$("an-fotos").click());
-  $("an-fotos").addEventListener("change",async e=>{
-    const arq=[...e.target.files].slice(0,MAXF-FOTOS.length);e.target.value="";let falhou=0;
-    $("an-fotos-bt").disabled=true;
-    for(const a of arq){try{const b=await comprimir(a);FOTOS.push({blob:b,url:URL.createObjectURL(b)})}catch(_){falhou++}}
-    desenhaFotos();
-    msg(falhou?"warn":"",falhou?(falhou+" foto(s) não puderam ser lidas. Use imagens JPG ou PNG."):"");
-  });
-  $("an-x").addEventListener("click",fechar);$("an-cancel").addEventListener("click",fechar);$("an-fim").addEventListener("click",fechar);
+  $("an-x").addEventListener("click",fechar);$("an-cancel").addEventListener("click",fechar);
+  $("an-wa").addEventListener("click",()=>{setTimeout(fechar,300)});
   $("anm").addEventListener("click",e=>{if(e.target===$("anm"))fechar()});
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("anm").hidden)fechar()});
   $("an-quem").addEventListener("click",e=>{const b=e.target.closest("button[data-v]");if(!b)return;QUEM=b.dataset.v;
-    [...$("an-quem").children].forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));$("an-creci-f").hidden=QUEM==="proprietario"});
-  $("an-sit").addEventListener("click",e=>{const b=e.target.closest("button[data-v]");if(!b)return;SIT=b.dataset.v;$("an-obra").hidden=SIT!=="novo";
-    [...$("an-sit").children].forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"))});
-  $("an-valor").addEventListener("input",e=>{const d=e.target.value.replace(/\D/g,"").slice(0,11);e.target.value=d?Number(d).toLocaleString("pt-BR"):""});
-  $("an-go").addEventListener("click",async()=>{
-    if(ENV)return;
-    const v=Number($("an-valor").value.replace(/\D/g,"")),tel=$("an-tel").value.replace(/\D/g,"");
-    if($("an-nome").value.trim().length<2){msg("warn","Informe seu nome.");return}
-    if(tel.length<10){msg("warn","Informe um telefone com DDD.");return}
-    if(!v){msg("warn","Informe o valor do imóvel.");return}
-    if(v<MIN){msg("warn","Por enquanto aceitamos apenas casas e apartamentos de alto padrão, a partir de R$ "+MIN.toLocaleString("pt-BR")+".");return}
-    if($("an-bairro").value.trim().length<2){msg("warn","Informe o bairro ou condomínio.");return}
-    if($("an-desc").value.trim().length<10){msg("warn","Descreva o imóvel em poucas linhas.");return}
-    if(!$("an-ok").checked){msg("warn","Marque a autorização de contato.");return}
-    if(!sb){msg("crit","Serviço indisponível. Tente mais tarde.");return}
-    ENV=true;$("an-go").disabled=true;msg("","");
-    let caminhos=[];
-    try{
-      if(FOTOS.length){
-        const pasta=uuid();
-        for(let i=0;i<FOTOS.length;i++){
-          $("an-go").textContent="Enviando fotos "+(i+1)+"/"+FOTOS.length+"...";
-          const {error:ue}=await sb.storage.from("anuncios").upload(pasta+"/"+i+".jpg",FOTOS[i].blob,{contentType:"image/jpeg",upsert:false});
-          if(ue)throw new Error("foto");
-          caminhos.push(pasta+"/"+i+".jpg");
-        }
-      }
-    }catch(e){ENV=false;$("an-go").disabled=false;$("an-go").textContent="Enviar anúncio";msg("crit","Não foi possível enviar as fotos. Verifique a internet e tente de novo, ou remova as fotos e envie só o texto.");return}
-    $("an-go").textContent="Enviando...";
-    try{
-      const {data,error}=await sb.functions.invoke("smart-endpoint",{body:{acao:"anunciar",quem:QUEM,nome:$("an-nome").value,telefone:$("an-tel").value,email:$("an-email").value,creci:$("an-creci").value,
-        tipo:$("an-tipo").value,situacao:SIT,fase:$("an-fase").value,entrega:$("an-ent").value,valor:String(v),cidade:$("an-cidade").value,bairro:$("an-bairro").value,descricao:$("an-desc").value,link:$("an-link").value,fotos:caminhos,site:$("an-site").value,aceite:true}});
-      if(error)throw error;
-      if(data&&data.ok){$("an-form").hidden=true;$("an-done").hidden=false;["an-nome","an-tel","an-email","an-creci","an-bairro","an-desc","an-link","an-valor","an-ent"].forEach(i=>$(i).value="");$("an-ok").checked=false;limpaFotos()}
-      else{ENV=false;msg(data&&data.erro==="muitos"?"warn":"crit",(data&&data.msg)||"Não foi possível enviar agora. Tente de novo.")}
-    }catch(e){ENV=false;msg("crit","Não foi possível enviar agora. Tente de novo em instantes.")}
-    $("an-go").disabled=false;$("an-go").textContent="Enviar anúncio";
-  });
+    [...$("an-quem").children].forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));link()});
 })();
 /* ---------- instalar como app ---------- */
 let PROMPT=null;
