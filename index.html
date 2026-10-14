@@ -216,8 +216,8 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 :root[data-theme="dark"] .vip{--vc:#d8c39a}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .vip{--vc:#d8c39a}}
 .vip:hover{background:color-mix(in srgb,var(--vc) 12%,transparent)}.vip:active{transform:translateY(1px)}
-.vip .vi{flex:none;width:40px;height:40px;display:grid;place-items:center;color:var(--vc)}
-.vip .vi svg{width:40px;height:40px;fill:currentColor;stroke:var(--bg);stroke-width:.7;stroke-linecap:round;stroke-linejoin:round}
+.vip .vi{flex:none;width:50px;height:50px;display:grid;place-items:center;color:var(--vc)}
+.vip .vi svg{width:50px;height:50px;fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
 .vip .vt{flex:1;min-width:0}
 .vip .vt small{display:block;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--vc)}
 .vip .vt b{display:block;font-size:17px;line-height:1.2;font-weight:700;margin:1px 0}
@@ -253,7 +253,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.46</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.49</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um e-mail com um <b>código de 6 números</b> e um botão para entrar.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -265,7 +265,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
       <button class="btn alt" id="g-ok" type="button">Entrar com o código</button>
     </div>
     <div id="g-msg" style="margin-top:12px"></div>
-    <button class="vip vs" type="button" id="g-anunciar"><span class="vi"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="rotate(-68 12 20)" d="M12 20C7.6 16.85 8.04 13.91 12 9.5C15.96 13.91 16.4 16.85 12 20z"/><path transform="rotate(68 12 20)" d="M12 20C7.6 16.85 8.04 13.91 12 9.5C15.96 13.91 16.4 16.85 12 20z"/><path transform="rotate(-36 12 20)" d="M12 20C7.4 15.8 7.86 11.879999999999999 12 6C16.14 11.879999999999999 16.6 15.8 12 20z"/><path transform="rotate(36 12 20)" d="M12 20C7.4 15.8 7.86 11.879999999999999 12 6C16.14 11.879999999999999 16.6 15.8 12 20z"/><path transform="rotate(0 12 20)" d="M12 20C7.4 14.9 7.86 10.14 12 3C16.14 10.14 16.6 14.9 12 20z"/></svg></span><span class="vt"><small>Alto padrão</small><b>Anuncie seu imóvel aqui</b></span><span class="va" aria-hidden="true">&rsaquo;</span></button>
+    <button class="vip vs" type="button" id="g-anunciar"><span class="vi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 2.6c-1.5 0-2.3 1-2.3 2.4v14c0 1.4.8 2.4 2.3 2.4s2.3-1 2.3-2.4V5c0-1.4-.8-2.4-2.3-2.4z"/><circle cx="6.5" cy="15" r="1"/><circle cx="6.5" cy="7" r=".5" fill="currentColor"/><path d="M8.8 15h4.4c2 0 3.2-1.2 3.2-2.8V8.6"/><path d="M16.4 8.6c0-2.3 3.7-2.7 4.2-.3.4 1.8-1.2 2.6-2.2 2-.9-.5-.6-1.7.2-1.6"/><path d="M12 13.6v2.8"/></svg></span><span class="vt"><small>Alto padrão</small><b>Anuncie seu imóvel aqui</b></span><span class="va" aria-hidden="true">&rsaquo;</span></button>
     <p class="hint" style="margin-top:14px">Uso restrito a corretores autorizados. O conteúdo, os dados e o código são protegidos por direitos autorais. É proibido copiar, reproduzir ou repassar o acesso. Ao entrar, você concorda com os <a href="termos.html" target="_blank" rel="noopener">termos de uso e a política de privacidade</a>.</p>
   </div>
 </div>
@@ -275,7 +275,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
     <div class="logo"><i></i>Corretor Master<small>Busca precisa nos portais · Goiânia e região</small></div>
     <div class="hdr-r"><button class="icon-btn" id="instalar" type="button" hidden>Instalar</button><button class="icon-btn" id="sair" type="button" hidden>Sair</button><button class="icon-btn" id="theme" type="button">Tema</button></div>
   </header>
-  <div class="vipw"><button class="vip" id="anunciar" type="button"><span class="vi"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="rotate(-68 12 20)" d="M12 20C7.6 16.85 8.04 13.91 12 9.5C15.96 13.91 16.4 16.85 12 20z"/><path transform="rotate(68 12 20)" d="M12 20C7.6 16.85 8.04 13.91 12 9.5C15.96 13.91 16.4 16.85 12 20z"/><path transform="rotate(-36 12 20)" d="M12 20C7.4 15.8 7.86 11.879999999999999 12 6C16.14 11.879999999999999 16.6 15.8 12 20z"/><path transform="rotate(36 12 20)" d="M12 20C7.4 15.8 7.86 11.879999999999999 12 6C16.14 11.879999999999999 16.6 15.8 12 20z"/><path transform="rotate(0 12 20)" d="M12 20C7.4 14.9 7.86 10.14 12 3C16.14 10.14 16.6 14.9 12 20z"/></svg></span><span class="vt"><small>Alto padrão</small><b>Anuncie seu imóvel aqui</b><span>Casas e apartamentos a partir de R$ 3,5 milhões</span></span><span class="va" aria-hidden="true">&rsaquo;</span></button></div>
+  <div class="vipw"><button class="vip" id="anunciar" type="button"><span class="vi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 2.6c-1.5 0-2.3 1-2.3 2.4v14c0 1.4.8 2.4 2.3 2.4s2.3-1 2.3-2.4V5c0-1.4-.8-2.4-2.3-2.4z"/><circle cx="6.5" cy="15" r="1"/><circle cx="6.5" cy="7" r=".5" fill="currentColor"/><path d="M8.8 15h4.4c2 0 3.2-1.2 3.2-2.8V8.6"/><path d="M16.4 8.6c0-2.3 3.7-2.7 4.2-.3.4 1.8-1.2 2.6-2.2 2-.9-.5-.6-1.7.2-1.6"/><path d="M12 13.6v2.8"/></svg></span><span class="vt"><small>Alto padrão</small><b>Anuncie seu imóvel aqui</b><span>Casas e apartamentos a partir de R$ 3,5 milhões</span></span><span class="va" aria-hidden="true">&rsaquo;</span></button></div>
   <nav role="tablist">
     <button role="tab" data-tab="busca" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span>Busca</span></button>
     <button role="tab" data-tab="link" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 005.6 0l3-3a4 4 0 00-5.6-5.6l-1 1"/><path d="M14 10a4 4 0 00-5.6 0l-3 3a4 4 0 005.6 5.6l1-1"/></svg><span>Link</span></button>
@@ -498,7 +498,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.46</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.49</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 
 <div class="modal" id="anm" hidden role="dialog" aria-modal="true" aria-labelledby="an-t">
