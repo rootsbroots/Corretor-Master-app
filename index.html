@@ -212,7 +212,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 .fotos .ft{position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:var(--surface-2)}
 .fotos .ft img{width:100%;height:100%;object-fit:cover;display:block}
 .fotos .ft button{position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;font-size:16px;line-height:1;cursor:pointer}
-.vip{--gold:#f2b705;--gold-2:#ffd75e;--gold-ink:#2a2100;display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;border:0;border-radius:18px;padding:14px 16px;min-height:64px;color:var(--gold-ink);background:linear-gradient(135deg,var(--gold-2),var(--gold));box-shadow:0 6px 18px rgba(242,183,5,.28);font:inherit}
+.vip{--gold:#c9a96a;--gold-2:#e9d8b4;--gold-ink:#2b2113;display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;border:0;border-radius:18px;padding:14px 16px;min-height:64px;color:var(--gold-ink);background:linear-gradient(135deg,var(--gold-2),var(--gold));box-shadow:0 6px 18px rgba(201,169,106,.28);font:inherit}
 .vip:hover{filter:brightness(1.04)}.vip:active{transform:translateY(1px)}
 .vip .vi{flex:none;width:40px;height:40px;border-radius:12px;background:rgba(42,33,0,.12);display:grid;place-items:center}
 .vip .vi svg{width:22px;height:22px;stroke:var(--gold-ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -228,16 +228,16 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 .modal ol.pas{margin:10px 0 0;padding-left:0;list-style:none;counter-reset:p;display:grid;gap:8px}
 .modal ol.pas li span{min-width:0}
 .modal ol.pas li{counter-increment:p;display:flex;gap:12px;align-items:center;font-size:15px}
-.modal ol.pas li::before{content:counter(p);flex:none;width:28px;height:28px;border-radius:50%;background:#f2b705;color:#2a2100;font-weight:800;display:grid;place-items:center;font-size:14px}
+.modal ol.pas li::before{content:counter(p);flex:none;width:28px;height:28px;border-radius:50%;background:#c9a96a;color:#2b2113;font-weight:800;display:grid;place-items:center;font-size:14px}
 .alink{background:none;border:0;color:var(--brand);font-weight:600;text-decoration:underline;cursor:pointer;padding:6px 0;font-size:14px}
 /* vitrine alto padrão */
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .vimv{background:var(--surface-2);border-radius:18px;overflow:hidden;margin-block:12px;border:1px solid var(--line)}
-.vt-capa{aspect-ratio:16/9;width:100%;object-fit:cover;display:block;background:linear-gradient(135deg,#ffd75e,#f2b705)}
-.vt-capa.ph{display:flex;align-items:center;justify-content:center;color:#2a2100;font-weight:800;letter-spacing:.1em;font-size:12px}
+.vt-capa{aspect-ratio:16/9;width:100%;object-fit:cover;display:block;background:linear-gradient(135deg,#e9d8b4,#c9a96a)}
+.vt-capa.ph{display:flex;align-items:center;justify-content:center;color:#2b2113;font-weight:800;letter-spacing:.1em;font-size:12px}
 .vt-c{padding:14px 16px;display:flex;flex-direction:column;gap:6px}
 .vt-c h3{margin:0;font-size:18px;line-height:1.25;text-transform:none;letter-spacing:0;color:var(--ink);font-weight:700;text-wrap:balance}
-.vt-v{font-weight:800;font-size:20px;color:#f2b705}
+.vt-v{font-weight:800;font-size:20px;color:#d9bf8a}
 .vt-t{display:flex;flex-wrap:wrap;gap:6px}
 .vt-t span{background:var(--surface);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}
 .vt-d{white-space:pre-line;color:var(--ink-2);font-size:14px}
@@ -251,7 +251,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.42</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.43</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um e-mail com um <b>código de 6 números</b> e um botão para entrar.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -496,7 +496,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.42</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.43</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 
 <div class="modal" id="anm" hidden role="dialog" aria-modal="true" aria-labelledby="an-t">
