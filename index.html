@@ -253,7 +253,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.57</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.59</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um e-mail com um <b>código de 6 números</b> e um botão para entrar.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -383,7 +383,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 
   <section id="tab-clientes" hidden>
     <div class="actions" style="margin:0 0 6px"><button class="btn alt" id="cli-exp" type="button">Exportar clientes</button><button class="btn alt" id="cli-imp" type="button">Importar clientes</button><input type="file" id="cli-file" accept=".json,application/json" hidden></div>
-    <p class="hint" style="margin:0 0 12px">Os clientes ficam neste aparelho e navegador. Exporte para guardar uma cópia ou levar a lista para outro aparelho ou outro app.</p>
+    <p class="hint" style="margin:0 0 12px">Seus clientes são salvos na sua conta e aparecem em qualquer aparelho e nos dois apps (SP e Goiás) quando você entra com o mesmo e-mail. Exportar guarda uma cópia extra. <span id="cli-sync"></span></p>
     <div id="lista"></div>
   </section>
 
@@ -516,7 +516,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.57</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.59</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 
 <div class="modal" id="anm" hidden role="dialog" aria-modal="true" aria-labelledby="an-t">
@@ -701,7 +701,7 @@ $("vt-lista").addEventListener("click",async e=>{
     try{const r=await api({acao:"vitrine_excluir",id:ex.dataset.ex});if(r&&r.ok){toast("Excluído.");vtCarregar()}else toast((r&&r.msg)||"Erro ao excluir.",4000)}catch(_){toast("Erro ao excluir.",4000)}}
 });
 
-/* clientes (neste aparelho) */
+/* clientes (sincronizados na conta) */
 function load(){try{return JSON.parse(localStorage.getItem("cm-clientes")||"[]")}catch(_){return[]}}
 function store(a){try{localStorage.setItem("cm-clientes",JSON.stringify(a));return true}catch(_){return false}}
 let mem=null;
@@ -710,17 +710,50 @@ function setC(a){mem=a;store(a);$("cnt").textContent=a.length?`(${a.length})`:""
 $("salvar").addEventListener("click",()=>{
   if(!S.nome.trim()){$("salvo-msg").innerHTML='<div class="alert warn">Informe o nome do cliente para salvar.</div>';return}
   const a=getC().filter(c=>c.id!==S.__id);const id=S.__id||String(Date.now());
-  a.unshift({id,data:new Date().toLocaleString("pt-BR"),perfil:{...S,__id:undefined}});
-  S.__id=id;setC(a);$("salvo-msg").innerHTML='<div class="alert good">Cliente salvo neste aparelho.</div>';
+  a.unshift({id,data:new Date().toLocaleString("pt-BR"),upd:Date.now(),perfil:{...S,__id:undefined}});
+  S.__id=id;setC(a);agendarNuvem();$("salvo-msg").innerHTML='<div class="alert good">Cliente salvo na sua conta.</div>';
 });
 $("limpar").addEventListener("click",()=>{S={...VAZIO};syncInputs();$("salvo-msg").innerHTML="";render()});
 function listar(){
   const a=getC();$("cnt").textContent=a.length?`(${a.length})`:"";
-  if(!a.length){$("lista").innerHTML='<div class="empty">Nenhum cliente salvo ainda. Monte uma busca e toque em Salvar cliente.<br>Os clientes ficam guardados neste aparelho e navegador.</div>';return}
+  if(!a.length){$("lista").innerHTML='<div class="empty">Nenhum cliente salvo ainda. Monte uma busca e toque em Salvar cliente.<br>Os clientes ficam guardados na sua conta e aparecem em qualquer aparelho.</div>';return}
   $("lista").innerHTML=a.map(c=>{const p=c.perfil;return`<div class="client"><div class="i"><strong>${esc(p.nome)}</strong><small>${esc(p.tipo)} · ${esc((CIDADES.find(x=>x.s===p.cidade)||{}).n||"")}${p.estado&&p.estado!==APP_ESTADO?" ("+esc(String(p.estado).toUpperCase())+")":""} · ${esc(c.data)}</small></div>
     <div class="pbtn"><button class="btn" data-open="${c.id}" type="button">Reabrir</button><button class="btn warn" data-del="${c.id}" type="button">Excluir</button></div></div>`}).join("");
 }
 const APP_ESTADO="go";
+/* ===== sincronização dos clientes na nuvem ===== */
+const NUVEM_EX="cm-excluidos",NUVEM_DONO="cm-clientes-dono";
+function exLer(){try{return JSON.parse(localStorage.getItem(NUVEM_EX)||"{}")||{}}catch(_){return{}}}
+function exGravar(o){try{localStorage.setItem(NUVEM_EX,JSON.stringify(o))}catch(_){}}
+function nuvemMsg(t){const e=$("cli-sync");if(e)e.textContent=t}
+function mesclar(loc,nuv,ex){
+  const m=new Map();
+  for(const c of [...nuv,...loc]){const o=m.get(c.id);if(!o||(c.upd||0)>(o.upd||0))m.set(c.id,c)}
+  const lim=Date.now()-90*86400000,e2={};
+  for(const k in ex)if(ex[k]>lim)e2[k]=ex[k];
+  const r=[...m.values()].filter(c=>!(e2[c.id]&&e2[c.id]>=(c.upd||0)));
+  r.sort((a,b)=>(b.upd||0)-(a.upd||0));
+  return {lista:r,ex:e2};
+}
+let nuvemBusy=false,nuvemAgain=false,nuvemT=null;
+async function sincronizar(){
+  if(!EMAIL)return;
+  if(nuvemBusy){nuvemAgain=true;return}
+  nuvemBusy=true;nuvemMsg("Sincronizando…");
+  try{
+    try{const d=localStorage.getItem(NUVEM_DONO);if(d&&d!==EMAIL){setC([]);exGravar({})}localStorage.setItem(NUVEM_DONO,EMAIL)}catch(_){}
+    const r=await api({acao:"clientes_carregar",estado:APP_ESTADO});
+    if(!r||!r.ok)throw 0;
+    const m=mesclar(getC(),r.clientes||[],Object.assign({},r.excluidos||{},exLer()));
+    exGravar(m.ex);setC(m.lista);listar();
+    const w=await api({acao:"clientes_salvar",clientes:m.lista,excluidos:m.ex,estado:APP_ESTADO});
+    if(!w||!w.ok)throw 0;
+    nuvemMsg("☁ Sincronizado");
+  }catch(e){if(e&&e.message==="dispositivo")return;nuvemMsg("Sem sincronização agora (seus clientes continuam salvos neste aparelho).")}
+  nuvemBusy=false;
+  if(nuvemAgain){nuvemAgain=false;agendarNuvem()}
+}
+function agendarNuvem(){clearTimeout(nuvemT);nuvemT=setTimeout(sincronizar,1200)}
 $("cli-exp").addEventListener("click",()=>{
   const a=getC();if(!a.length){toast("Nenhum cliente para exportar.");return}
   const blob=new Blob([JSON.stringify({app:"corretor-master",versao:1,exportado:new Date().toISOString(),clientes:a},null,2)],{type:"application/json"});
@@ -739,14 +772,14 @@ $("cli-file").addEventListener("change",async e=>{
     if(!ok.length)throw 0;
     const atual=getC(),ids=new Set(atual.map(c=>c.id));
     const novos=ok.filter(c=>!ids.has(c.id)).map(c=>({id:c.id,data:String(c.data||"").slice(0,40),perfil:c.perfil}));
-    setC([...novos,...atual]);listar();
+    setC([...novos.map(c=>({...c,upd:Date.now()})),...atual]);listar();agendarNuvem();
     toast(novos.length+" cliente(s) importado(s)."+(ok.length-novos.length?" "+(ok.length-novos.length)+" já existia(m).":""),4000);
   }catch(_){toast("Arquivo inválido. Use um arquivo exportado pelo Corretor Master.",4000)}
 });
 $("lista").addEventListener("click",e=>{
   const o=e.target.closest("[data-open]"),d=e.target.closest("[data-del]");
   if(o){const c=getC().find(x=>x.id===o.dataset.open);if(c){if((c.perfil.estado||APP_ESTADO)!==APP_ESTADO){toast("Este cliente é de outro estado. Reabra no app daquele estado.",4000);return}S={...VAZIO,...c.perfil,__id:c.id};syncInputs();render();tab("busca")}}
-  if(d){ if(d.dataset.arm){setC(getC().filter(x=>x.id!==d.dataset.del));listar()} else{d.dataset.arm="1";d.textContent="Confirmar exclusão"} }
+  if(d){ if(d.dataset.arm){{const ex=exLer();ex[d.dataset.del]=Date.now();exGravar(ex)}setC(getC().filter(x=>x.id!==d.dataset.del));listar();agendarNuvem()} else{d.dataset.arm="1";d.textContent="Confirmar exclusão"} }
 });
 
 /* colar link */
@@ -1224,7 +1257,7 @@ async function checar(session){
       $("g-msg").insertAdjacentHTML("beforeend",'<p class="hint">Detalhe técnico: '+esc((e&&e.message)||String(e))+'</p><div class="actions"><button class="btn" id="g-re" type="button">Tentar de novo</button> <button class="btn alt" id="g-out" type="button">Sair</button></div>');
       $("g-re").onclick=()=>location.reload();$("g-out").onclick=sair;return}
   }
-  $("gate").hidden=true;$("app").hidden=false;$("sair").hidden=false;marcaDagua(email);setUpg();verPlano();
+  $("gate").hidden=true;$("app").hidden=false;$("sair").hidden=false;marcaDagua(email);setUpg();verPlano();sincronizar();
   if(!era)logUso("entrou");
   enviarAceite();
 }
