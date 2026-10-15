@@ -507,6 +507,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
         <button type="button" class="btn alt" data-breve="Belo Horizonte">Belo Horizonte <small style="margin-left:6px;opacity:.75">· em breve</small></button>
         <button type="button" class="btn alt" data-breve="Brasília">Brasília <small style="margin-left:6px;opacity:.75">· em breve</small></button>
       </div>
+      <div id="brasil-box" hidden style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)"><p style="margin:0 0 8px"><b>Plano Brasil:</b> todos os estados por <b>R$ 49,90 por mês</b>.</p><a class="btn" id="brasil-a" href="#" target="_blank" rel="noopener">Assinar plano Brasil</a></div>
       <p class="hint" id="breve-msg" role="status" style="margin-top:10px" hidden></p>
       <p class="hint" style="margin-top:10px">Use o mesmo e-mail para entrar. A assinatura é por estado.</p>
     </div>
@@ -1125,6 +1126,7 @@ async function entBuscar(){
 const FONE_UPG="5562982505081";let PLANO_ATUAL="";
 /* Cole aqui o link de pagamento do Asaas (assinatura mensal R$ 24,90). Vazio = o botão abre o WhatsApp. */
 const LINK_ASSINAR="https://www.asaas.com/000/c/4pcx7f9b3zqmz20n"; /* link da assinatura mensal (conta real do Asaas) */
+const LINK_BRASIL=""; /* COLE AQUI o link do plano Brasil (R$ 49,90) */
 function assinarUrl(p){return LINK_ASSINAR||upgUrl(p)}
 function upgBtn(p){return !p||p==="unlimited"?"":'<div class="actions"><a class="btn acc" data-upg href="'+esc(assinarUrl(p))+'" target="_blank" rel="noopener">Assinar o Unlimited (R$ 24,90/mês)</a> <button type="button" class="btn alt" data-ja>Já assinei, liberar meu acesso</button></div>'+(LINK_ASSINAR?'<p class="hint">Ao pagar, use o <b>mesmo e-mail do login</b> ('+esc(EMAIL||"")+'). O plano é liberado automaticamente em poucos minutos.</p>':"")}
 function upgUrl(p){
@@ -1202,6 +1204,7 @@ async function checar(session){
   enviarAceite();
 }
 async function enviarAceite(){try{if(localStorage.getItem("cm_aceita_email")!=="1")return;const r=await api({acao:"aceite_email",aceita:true,estado:(typeof S!=="undefined"&&S.estado)||"go"});if(r&&r.ok)localStorage.removeItem("cm_aceita_email")}catch(_){}}
+try{if(LINK_BRASIL){$("brasil-a").href=LINK_BRASIL;$("brasil-box").hidden=false}}catch(_){}
 document.querySelectorAll("[data-breve]").forEach(b=>b.addEventListener("click",()=>{const m=$("breve-msg");m.hidden=false;m.textContent=b.dataset.breve+": em construção. Em breve no Corretor Master."}));
 $("g-go").addEventListener("click",async()=>{
   const email=$("g-email").value.trim().toLowerCase();
