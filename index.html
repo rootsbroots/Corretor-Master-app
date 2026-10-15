@@ -754,6 +754,9 @@ async function sincronizar(){
   if(nuvemAgain){nuvemAgain=false;agendarNuvem()}
 }
 function agendarNuvem(){clearTimeout(nuvemT);nuvemT=setTimeout(sincronizar,1200)}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&EMAIL)agendarNuvem()});
+window.addEventListener("focus",()=>{if(EMAIL)agendarNuvem()});
+setInterval(()=>{if(EMAIL&&!document.hidden)agendarNuvem()},60000);
 $("cli-exp").addEventListener("click",()=>{
   const a=getC();if(!a.length){toast("Nenhum cliente para exportar.");return}
   const blob=new Blob([JSON.stringify({app:"corretor-master",versao:1,exportado:new Date().toISOString(),clientes:a},null,2)],{type:"application/json"});
