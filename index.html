@@ -382,6 +382,8 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
   </section>
 
   <section id="tab-clientes" hidden>
+    <div class="actions" style="margin:0 0 6px"><button class="btn alt" id="cli-exp" type="button">Exportar clientes</button><button class="btn alt" id="cli-imp" type="button">Importar clientes</button><input type="file" id="cli-file" accept=".json,application/json" hidden></div>
+    <p class="hint" style="margin:0 0 12px">Os clientes ficam neste aparelho e navegador. Exporte para guardar uma cópia ou levar a lista para outro aparelho ou outro app.</p>
     <div id="lista"></div>
   </section>
 
@@ -715,12 +717,35 @@ $("limpar").addEventListener("click",()=>{S={...VAZIO};syncInputs();$("salvo-msg
 function listar(){
   const a=getC();$("cnt").textContent=a.length?`(${a.length})`:"";
   if(!a.length){$("lista").innerHTML='<div class="empty">Nenhum cliente salvo ainda. Monte uma busca e toque em Salvar cliente.<br>Os clientes ficam guardados neste aparelho e navegador.</div>';return}
-  $("lista").innerHTML=a.map(c=>{const p=c.perfil;return`<div class="client"><div class="i"><strong>${esc(p.nome)}</strong><small>${esc(p.tipo)} · ${esc((CIDADES.find(x=>x.s===p.cidade)||{}).n||"")} · ${esc(c.data)}</small></div>
+  $("lista").innerHTML=a.map(c=>{const p=c.perfil;return`<div class="client"><div class="i"><strong>${esc(p.nome)}</strong><small>${esc(p.tipo)} · ${esc((CIDADES.find(x=>x.s===p.cidade)||{}).n||"")}${p.estado&&p.estado!==APP_ESTADO?" ("+esc(String(p.estado).toUpperCase())+")":""} · ${esc(c.data)}</small></div>
     <div class="pbtn"><button class="btn" data-open="${c.id}" type="button">Reabrir</button><button class="btn warn" data-del="${c.id}" type="button">Excluir</button></div></div>`}).join("");
 }
+const APP_ESTADO="go";
+$("cli-exp").addEventListener("click",()=>{
+  const a=getC();if(!a.length){toast("Nenhum cliente para exportar.");return}
+  const blob=new Blob([JSON.stringify({app:"corretor-master",versao:1,exportado:new Date().toISOString(),clientes:a},null,2)],{type:"application/json"});
+  const u=URL.createObjectURL(blob),l=document.createElement("a");
+  l.href=u;l.download="clientes-corretor-master-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);
+  toast("Arquivo de clientes baixado.");
+});
+$("cli-imp").addEventListener("click",()=>$("cli-file").click());
+$("cli-file").addEventListener("change",async e=>{
+  const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;
+  try{
+    if(f.size>5e6)throw 0;
+    const j=JSON.parse(await f.text()),arr=Array.isArray(j)?j:(j&&j.clientes);
+    if(!Array.isArray(arr))throw 0;
+    const ok=arr.filter(c=>c&&typeof c.id==="string"&&/^[\w.-]{1,40}$/.test(c.id)&&c.perfil&&typeof c.perfil==="object"&&typeof c.perfil.nome==="string");
+    if(!ok.length)throw 0;
+    const atual=getC(),ids=new Set(atual.map(c=>c.id));
+    const novos=ok.filter(c=>!ids.has(c.id)).map(c=>({id:c.id,data:String(c.data||"").slice(0,40),perfil:c.perfil}));
+    setC([...novos,...atual]);listar();
+    toast(novos.length+" cliente(s) importado(s)."+(ok.length-novos.length?" "+(ok.length-novos.length)+" já existia(m).":""),4000);
+  }catch(_){toast("Arquivo inválido. Use um arquivo exportado pelo Corretor Master.",4000)}
+});
 $("lista").addEventListener("click",e=>{
   const o=e.target.closest("[data-open]"),d=e.target.closest("[data-del]");
-  if(o){const c=getC().find(x=>x.id===o.dataset.open);if(c){S={...VAZIO,...c.perfil,__id:c.id};syncInputs();render();tab("busca")}}
+  if(o){const c=getC().find(x=>x.id===o.dataset.open);if(c){if((c.perfil.estado||APP_ESTADO)!==APP_ESTADO){toast("Este cliente é de outro estado. Reabra no app daquele estado.",4000);return}S={...VAZIO,...c.perfil,__id:c.id};syncInputs();render();tab("busca")}}
   if(d){ if(d.dataset.arm){setC(getC().filter(x=>x.id!==d.dataset.del));listar()} else{d.dataset.arm="1";d.textContent="Confirmar exclusão"} }
 });
 
