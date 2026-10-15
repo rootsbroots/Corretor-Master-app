@@ -1126,7 +1126,7 @@ async function entBuscar(){
 const FONE_UPG="5562982505081";let PLANO_ATUAL="";
 /* Cole aqui o link de pagamento do Asaas (assinatura mensal R$ 24,90). Vazio = o botão abre o WhatsApp. */
 const LINK_ASSINAR="https://www.asaas.com/000/c/4pcx7f9b3zqmz20n"; /* link da assinatura mensal (conta real do Asaas) */
-const LINK_BRASIL=""; /* COLE AQUI o link do plano Capitais (R$ 49,90) */
+const LINK_BRASIL="https://www.asaas.com/000/c/vppxz39z9fuanp0d"; /* COLE AQUI o link do plano Capitais (R$ 49,90) */
 function assinarUrl(p){return LINK_ASSINAR||upgUrl(p)}
 function upgBtn(p){return !p||p==="unlimited"?"":'<div class="actions"><a class="btn acc" data-upg href="'+esc(assinarUrl(p))+'" target="_blank" rel="noopener">Assinar o Unlimited (R$ 24,90/mês)</a> <button type="button" class="btn alt" data-ja>Já assinei, liberar meu acesso</button></div>'+(LINK_ASSINAR?'<p class="hint">Ao pagar, use o <b>mesmo e-mail do login</b> ('+esc(EMAIL||"")+'). O plano é liberado automaticamente em poucos minutos.</p>':"")}
 function upgUrl(p){
