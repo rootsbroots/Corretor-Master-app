@@ -257,6 +257,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um e-mail com um <b>código de 6 números</b> e um botão para entrar.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
+      <label class="chk" style="display:flex;gap:8px;align-items:flex-start;margin:4px 0 12px;font-size:12.5px;line-height:1.4;color:var(--ink-2)"><input type="checkbox" id="g-aceita" style="margin-top:2px;flex:none"><span>Quero receber novidades e ofertas do Corretor Master por e-mail (opcional). Posso cancelar quando quiser.</span></label>
       <button class="btn" id="g-go" type="button">Receber código de acesso</button>
     </div>
     <div id="g-code" hidden style="margin-top:14px">
@@ -1185,11 +1186,14 @@ async function checar(session){
   }
   $("gate").hidden=true;$("app").hidden=false;$("sair").hidden=false;marcaDagua(email);setUpg();verPlano();
   if(!era)logUso("entrou");
+  enviarAceite();
 }
+async function enviarAceite(){try{if(localStorage.getItem("cm_aceita_email")!=="1")return;const r=await api({acao:"aceite_email",aceita:true,estado:(typeof S!=="undefined"&&S.estado)||"go"});if(r&&r.ok)localStorage.removeItem("cm_aceita_email")}catch(_){}}
 $("g-go").addEventListener("click",async()=>{
   const email=$("g-email").value.trim().toLowerCase();
   if(!/^\S+@\S+\.\S+$/.test(email)){gmsg("warn","Digite um e-mail válido.");return}
   $("g-go").disabled=true;gmsg("","");
+  try{localStorage.setItem("cm_aceita_email",$("g-aceita").checked?"1":"")}catch(_){}
   try{
     const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:true}});
     if(error)throw error;
