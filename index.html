@@ -245,6 +245,9 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 .vt-d{white-space:pre-line;color:var(--ink-2);font-size:14px}
 .vt-x{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
 .vt-c .btn{min-height:40px;padding:8px 16px;font-size:14px}
+.pasta{margin-bottom:10px}.pasta>summary{cursor:pointer;list-style:none;font-weight:700;font-size:16px;padding:10px 4px;display:flex;align-items:center;gap:8px}
+.pasta>summary::-webkit-details-marker{display:none}.pasta>summary::after{content:"▾";margin-left:auto;color:var(--ink-2);transition:transform .15s}.pasta:not([open])>summary::after{transform:rotate(-90deg)}
+.pasta .pn{color:var(--ink-2);font-weight:600}.pasta .pf{font-size:18px}
 </style>
 <style>html,body{margin:0}body{min-height:100%}</style>
 </head>
@@ -253,7 +256,7 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="gate" hidden>
   <div class="logo" style="margin-bottom:18px"><i></i>Corretor Master<small>Acesso restrito a corretores autorizados</small></div>
   <div class="panel">
-    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.59</p>
+    <h2>Entrar</h2><p class="hint" style="margin:-6px 0 10px">v1.60</p>
     <div id="g-form">
       <p>Digite seu e-mail. Enviaremos um e-mail com um <b>código de 6 números</b> e um botão para entrar.</p>
       <div class="f"><label for="g-email">E-mail</label><input type="text" id="g-email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></div>
@@ -273,9 +276,10 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div id="app" hidden>
 <div class="wrap">
   <header>
-    <div class="logo"><i></i>Corretor Master<small>Busca precisa nos portais · Goiás</small></div>
+    <div class="logo"><i></i>Corretor Master<small id="sub-est">Busca precisa nos portais</small></div>
     <div class="hdr-r"><button class="icon-btn" id="instalar" type="button" hidden>Instalar</button><button class="icon-btn" id="sair" type="button" hidden>Sair</button><button class="icon-btn" id="theme" type="button">Tema</button></div>
   </header>
+  <div style="display:flex;align-items:center;gap:10px;margin:2px 0 12px"><span class="hint" style="margin:0;white-space:nowrap">Buscando em</span><select class="icon-btn" id="estado-top" aria-label="Estado" style="flex:1;min-width:0;color:inherit;font:inherit;font-weight:700;padding-inline:16px"></select></div>
   <div class="vipw"><button class="vip" id="anunciar" type="button"><span class="vi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M12 14l1.2 1.9 2.1.5-1.5 1.5.3 2.1-2.1-1-2.1 1 .3-2.1-1.5-1.5 2.1-.5z"/></svg></span><span class="vt"><small>Alto padrão</small><b>Anuncie seu imóvel aqui</b><span>Casas e apartamentos selecionados</span></span><span class="va" aria-hidden="true">&rsaquo;</span></button></div>
   <nav role="tablist">
     <button role="tab" data-tab="busca" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span>Busca</span></button>
@@ -502,21 +506,16 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 
     <div class="panel" id="outros-estados" style="margin-top:14px">
       <h2 style="margin:0 0 4px">Seu cliente quer investir em outros estados?</h2>
-      <p class="hint" style="margin:0 0 10px">Acesse as principais capitais.</p>
-      <div class="actions" style="margin-top:0">
-        <a class="btn alt" href="https://corretormastersp.com" target="_blank" rel="noopener">São Paulo</a>
-        <button type="button" class="btn alt" data-breve="Rio de Janeiro">Rio de Janeiro <small style="margin-left:6px;opacity:.75">· em breve</small></button>
-        <button type="button" class="btn alt" data-breve="Belo Horizonte">Belo Horizonte <small style="margin-left:6px;opacity:.75">· em breve</small></button>
-        <button type="button" class="btn alt" data-breve="Brasília">Brasília <small style="margin-left:6px;opacity:.75">· em breve</small></button>
-      </div>
+      <p class="hint" style="margin:0 0 10px">Troque de estado pelo seletor no topo ou toque abaixo. Seus clientes ficam todos no mesmo lugar.</p>
+      <div class="actions" style="margin-top:0" id="trocar-estado"></div>
       <div id="brasil-box" hidden style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)"><p style="margin:0 0 8px"><b>Plano Capitais:</b> acesso ilimitado às principais capitais por <b>R$ 49,90 por mês</b>.</p><a class="btn" id="brasil-a" href="#" target="_blank" rel="noopener">Assinar plano Capitais</a></div>
       <p class="hint" id="breve-msg" role="status" style="margin-top:10px" hidden></p>
-      <p class="hint" style="margin-top:10px">Use o mesmo e-mail para entrar. A assinatura é por estado.</p>
+      <p class="hint" style="margin-top:10px">Use o mesmo e-mail em todos os estados. A assinatura é por estado, ou Plano Capitais para todos.</p>
     </div>
   </section>
 </div>
 <div id="tip" hidden></div>
-<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.59</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
+<p class="termos"><a id="upg" class="btn alt" href="#" target="_blank" rel="noopener" data-upg style="display:inline-block;margin-bottom:12px">Quer mais consultas? Peça um upgrade</a><br><button type="button" id="jaass" class="btn alt" data-ja style="margin-bottom:12px">Já assinei, liberar meu acesso</button><br><span id="lic" class="hint"></span><br><span id="meuplano" class="hint"></span><br><a href="termos.html" target="_blank" rel="noopener">Termos de uso, privacidade e cancelamento</a><br><b>Corretor Master · v1.60</b><br>© Corretor Master. Acesso pessoal e intransferível, registrado em seu nome. Conteúdo, dados e código protegidos por direitos autorais; é proibido copiar, reproduzir ou compartilhar o acesso.</p>
 </div>
 
 <div class="modal" id="anm" hidden role="dialog" aria-modal="true" aria-labelledby="an-t">
@@ -537,9 +536,16 @@ nav button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);bo
 <div class="toast" id="toast" hidden></div>
 
 <script>
-let ESTADOS=[{s:"go",n:"Goiás",uf:"GO"}],CIDADES=[{n:"Goiânia",s:"goiania",uf:"go"}],BAIRROS=[],CONDOS={},PARQUES=[];
+function estadoInicial(){let e="";try{const q=new URLSearchParams(location.search).get("e");if(q)e=q.toLowerCase()}catch(_){}
+  if(!e){try{e=localStorage.getItem("cm-estado")||""}catch(_){}}
+  if(!e&&/corretormastersp/i.test(location.hostname))e="sp";
+  return /^[a-z]{2}$/.test(e)?e:"go"}
+const EST0=estadoInicial();
+const PH={go:{n:"Goiás",c:"Goiânia",s:"goiania"},sp:{n:"São Paulo",c:"São Paulo",s:"sao-paulo"}};
+function phEst(){const p=PH[EST0]||PH.go,u=PH[EST0]?EST0:"go";return {E:[{s:u,n:p.n,uf:u.toUpperCase()}],C:[{n:p.c,s:p.s,uf:u}]}}
+let ESTADOS=phEst().E,CIDADES=phEst().C,BAIRROS=[],CONDOS={},PARQUES=[];
 
-const VAZIO={nome:"",trat:"",idade:"",tipo:"apartamento",locCasa:"bairro",piscina:"",vista:"",parque:"",condicao:"",status:"",mobiliado:"",vmin:0,vmax:0,estado:"go",cidade:"goiania",bairro:"",condo:"",condoOutro:""};
+const VAZIO={nome:"",trat:"",idade:"",tipo:"apartamento",locCasa:"bairro",piscina:"",vista:"",parque:"",condicao:"",status:"",mobiliado:"",vmin:0,vmax:0,estado:EST0,cidade:"goiania",bairro:"",condo:"",condoOutro:""};
 let S={...VAZIO};
 const $=id=>document.getElementById(id);
 const brl=n=>n?"R$ "+n.toLocaleString("pt-BR"):"";
@@ -549,7 +555,7 @@ const num=v=>parseInt(String(v).replace(/\D/g,""),10)||0;
 let toastT;
 function toast(m,ms){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,ms||2200)}
 
-function cidadeObj(){return CIDADES.find(c=>c.s===S.cidade&&c.uf===(S.estado||"go"))||CIDADES.find(c=>c.uf===(S.estado||"go"))||CIDADES[0]}
+function cidadeObj(){return CIDADES.find(c=>c.s===S.cidade&&c.uf===(S.estado||EST0))||CIDADES.find(c=>c.uf===(S.estado||EST0))||CIDADES[0]}
 function temBairros(){const c=cidadeObj();return BAIRROS.some(b=>b.cid===c.s)}
 function esc(t){return String(t).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
 
@@ -573,8 +579,11 @@ function ui(){marcarAtalhos();
 }
 function render(){ui();if(!PRONTO)return;if(GER&&!gerado())pintar();clearTimeout(tm);tm=setTimeout(atualizar,180)}
 let _DISP="";
-function dispId(){if(_DISP)return _DISP;try{_DISP=localStorage.getItem("cm_disp")||""}catch(_){}if(!_DISP){_DISP=(self.crypto&&crypto.randomUUID?crypto.randomUUID():"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,12));try{localStorage.setItem("cm_disp",_DISP)}catch(_){}}return _DISP}
-function bloqueioDisp(msg,teste){$("app").hidden=true;$("gate").hidden=false;$("sair").hidden=true;$("g-form").hidden=true;$("g-code").hidden=true;const m="Olá! Sou "+(EMAIL||"corretor")+" e preciso trocar o aparelho do meu acesso ao Corretor Master.";if(teste){$("g-msg").innerHTML='<div class="alert crit">'+esc(msg)+'</div><div class="actions"><a class="btn acc" href="'+esc(LINK_ASSINAR||("https://wa.me/"+FONE_UPG))+'" target="_blank" rel="noopener">Assinar o Unlimited (R$ 24,90/mês)</a> <button type="button" class="btn alt" data-ja>Já assinei, liberar meu acesso</button></div><p class="hint">Ao pagar, use o <b>mesmo e-mail do login</b> ('+esc(EMAIL||"")+').</p>';return}$("g-msg").innerHTML='<div class="alert crit">'+esc(msg)+'</div><div class="actions"><a class="btn acc" href="https://wa.me/'+FONE_UPG+'?text='+encodeURIComponent(m)+'" target="_blank" rel="noopener">Pedir liberação no WhatsApp</a></div>'}
+function dispId(){if(_DISP)return _DISP;try{_DISP=localStorage.getItem("cm_disp")||""}catch(_){}
+  /* vindo do endereço antigo de SP: aproveita o mesmo código do aparelho para não gastar outra vaga */
+  try{const u=new URL(location.href),d=u.searchParams.get("d");if(d){u.searchParams.delete("d");history.replaceState(null,"",u.pathname+u.search+u.hash);if(!_DISP&&/^[\w-]{8,80}$/.test(d)){_DISP=d;localStorage.setItem("cm_disp",d)}}}catch(_){}
+  if(!_DISP){_DISP=(self.crypto&&crypto.randomUUID?crypto.randomUUID():"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,12));try{localStorage.setItem("cm_disp",_DISP)}catch(_){}}return _DISP}
+function bloqueioDisp(msg,teste){$("app").hidden=true;$("gate").hidden=false;$("sair").hidden=true;$("g-form").hidden=true;$("g-code").hidden=true;const m="Olá! Sou "+(EMAIL||"corretor")+" e preciso trocar o aparelho do meu acesso ao Corretor Master.";if(teste){$("g-msg").innerHTML='<div class="alert crit">'+esc(msg)+'</div><div class="actions"><a class="btn acc" href="'+esc(LINKS_ASSINAR[estAtual()]||("https://wa.me/"+FONE_UPG+"?text="+encodeURIComponent("Olá! Sou "+(EMAIL||"corretor")+" e quero assinar o Corretor Master ("+NOME_EST[estAtual()]+").")))+'" target="_blank" rel="noopener">'+esc(rotuloAssinar())+'</a> <button type="button" class="btn alt" data-ja>Já assinei, liberar meu acesso</button></div><p class="hint">Ao pagar, use o <b>mesmo e-mail do login</b> ('+esc(EMAIL||"")+').</p>';return}$("g-msg").innerHTML='<div class="alert crit">'+esc(msg)+'</div><div class="actions"><a class="btn acc" href="https://wa.me/'+FONE_UPG+'?text='+encodeURIComponent(m)+'" target="_blank" rel="noopener">Pedir liberação no WhatsApp</a></div>'}
 async function api(body){body=Object.assign({disp:dispId()},body);const {data,error}=await sb.functions.invoke("smart-endpoint",{body});if(error)throw error;if(data&&data.erro==="dispositivo"){bloqueioDisp(data.msg,data.teste);const e=new Error("dispositivo");e.msg=data.msg;throw e}if(data&&data.erro==="limite"){const e=new Error("limite");e.msg=data.msg;e.plano=data.plano;throw e}return data}
 async function atualizar(){
   const my=++seq;
@@ -601,11 +610,14 @@ function syncInputs(){
   $("nome").value=S.nome;$("idade").value=S.idade;
   $("vmin").value=S.vmin?S.vmin.toLocaleString("pt-BR"):"";$("vmax").value=S.vmax?S.vmax.toLocaleString("pt-BR"):"";
   
-  $("estado").value=S.estado||"go";fillSelects();$("cidade").value=S.cidade;$("bairro").value=S.bairro;$("condo").value=S.condo;$("condo-outro").value=S.condoOutro;$("parque").value=S.parque;
+  $("estado").value=S.estado||EST0;fillSelects();$("cidade").value=S.cidade;$("bairro").value=S.bairro;$("condo").value=S.condo;$("condo-outro").value=S.condoOutro;$("parque").value=S.parque;
 }
 function fillSelects(){
-  if(!S.estado)S.estado="go";
+  if(!ESTADOS.some(e=>e.s===S.estado))S.estado=ESTADOS.some(e=>e.s===EST0)?EST0:ESTADOS[0].s;
+  try{localStorage.setItem("cm-estado",S.estado)}catch(_){}
   $("estado").innerHTML=ESTADOS.map(e=>`<option value="${e.s}">${e.n}</option>`).join("");$("estado").value=S.estado;
+  $("estado-top").innerHTML=ESTADOS.map(e=>`<option value="${e.s}">${e.n}</option>`).join("");$("estado-top").value=S.estado;
+  try{outrosEstados()}catch(_){}
   const cs=CIDADES.filter(c=>c.uf===S.estado);if(!cs.some(c=>c.s===S.cidade)&&cs.length)S.cidade=cs[0].s;
   $("cidade").innerHTML=cs.map(c=>`<option value="${c.s}">${c.n}</option>`).join("");$("cidade").value=S.cidade;
   $("bairro").innerHTML='<option value="">Cidade toda</option>'+BAIRROS.filter(b=>b.cid===S.cidade).map(b=>`<option value="${b.s}">${b.n}</option>`).join("");
@@ -626,7 +638,8 @@ document.querySelectorAll(".seg:not(.segx)").forEach(g=>g.addEventListener("clic
 }));
 const bind=(id,k,fn)=>$(id).addEventListener("input",e=>{S[k]=fn?fn(e.target.value):e.target.value;render()});
 bind("nome","nome");bind("idade","idade");bind("bairro","bairro");bind("condo","condo");bind("condo-outro","condoOutro");bind("parque","parque");
-$("estado").addEventListener("input",e=>{S.estado=e.target.value;S.cidade="";S.bairro="";S.condo="";S.condoOutro="";S.parque="";fillSelects();$("bairro").value="";render()});
+$("estado-top").addEventListener("change",e=>{$("estado").value=e.target.value;$("estado").dispatchEvent(new Event("input"))});
+$("estado").addEventListener("input",e=>{S.estado=e.target.value;S.cidade="";S.bairro="";S.condo="";S.condoOutro="";S.parque="";fillSelects();$("bairro").value="";render();if(typeof verPlano==="function")verPlano()});
 $("cidade").addEventListener("input",e=>{S.cidade=e.target.value;S.bairro="";S.condo="";S.condoOutro="";S.parque="";fillSelects();$("bairro").value="";render()});
 ["vmin","vmax"].forEach(k=>$(k).addEventListener("input",e=>{
   S[k]=num(e.target.value);
@@ -716,13 +729,25 @@ $("salvar").addEventListener("click",()=>{
   S.__id=id;setC(a);agendarNuvem();$("salvo-msg").innerHTML='<div class="alert good">Cliente salvo na sua conta.</div>';
 });
 $("limpar").addEventListener("click",()=>{S={...VAZIO};syncInputs();$("salvo-msg").innerHTML="";render()});
+let PLANO_EST={};
+const ABERTAS=new Set();
+function linhaCliente(c){const p=c.perfil;return`<div class="client"><div class="i"><strong>${esc(p.nome)}</strong><small>${esc(p.tipo)} · ${esc((CIDADES.find(x=>x.s===p.cidade)||{}).n||"")} · ${esc(c.data)}</small></div>
+    <div class="pbtn"><button class="btn" data-open="${c.id}" type="button">Reabrir</button><button class="btn warn" data-del="${c.id}" type="button">Excluir</button></div></div>`}
 function listar(){
   const a=getC();$("cnt").textContent=a.length?`(${a.length})`:"";
-  if(!a.length){$("lista").innerHTML='<div class="empty">Nenhum cliente salvo ainda. Monte uma busca e toque em Salvar cliente.<br>Os clientes ficam guardados na sua conta e aparecem em qualquer aparelho.</div>';return}
-  $("lista").innerHTML=a.map(c=>{const p=c.perfil;return`<div class="client"><div class="i"><strong>${esc(p.nome)}</strong><small>${esc(p.tipo)} · ${esc((CIDADES.find(x=>x.s===p.cidade)||{}).n||"")}${p.estado&&p.estado!==APP_ESTADO?" ("+esc(String(p.estado).toUpperCase())+")":""} · ${esc(c.data)}</small></div>
-    <div class="pbtn"><button class="btn" data-open="${c.id}" type="button">Reabrir</button><button class="btn warn" data-del="${c.id}" type="button">Excluir</button></div></div>`}).join("");
+  if(!a.length&&!(typeof ESTADOS!=="undefined"&&ESTADOS.length>1&&Object.values(PLANO_EST).filter(x=>x&&x.plano==="unlimited").length>=2)){$("lista").innerHTML='<div class="empty">Nenhum cliente salvo ainda. Monte uma busca e toque em Salvar cliente.<br>Os clientes ficam guardados na sua conta e aparecem em qualquer aparelho.</div>';return}
+  /* pastas por estado: quem tem 2 ou mais estados contratados (ou Plano Capitais) vê todas as pastas; os demais, só as que têm clientes */
+  const pagos=Object.keys(PLANO_EST).filter(k=>PLANO_EST[k]&&PLANO_EST[k].plano==="unlimited").length;
+  const pasta=c=>(c.perfil.estado||EST0);
+  const por={};a.forEach(c=>{(por[pasta(c)]=por[pasta(c)]||[]).push(c)});
+  const lista=ESTADOS.map(e=>e.s);Object.keys(por).forEach(k=>{if(!lista.includes(k))lista.push(k)});
+  const nome=k=>(ESTADOS.find(e=>e.s===k)||{}).n||(NOME_EST[k]||String(k).toUpperCase());
+  const visiveis=lista.filter(k=>pagos>=2?true:(por[k]||[]).length||k===S.estado);
+  if(!ABERTAS.has("_init")){ABERTAS.add("_init");ABERTAS.add(S.estado)}
+  $("lista").innerHTML=visiveis.map(k=>{const l=por[k]||[];
+    return`<details class="pasta" data-uf="${esc(k)}"${ABERTAS.has(k)?" open":""}><summary><span class="pf">📁</span> ${esc(nome(k))} <small class="pn">(${l.length})</small></summary>${l.length?l.map(linhaCliente).join(""):'<div class="empty" style="padding:10px 4px">Nenhum cliente nesta pasta ainda.</div>'}</details>`}).join("");
+  $("lista").querySelectorAll("details.pasta").forEach(d=>d.addEventListener("toggle",()=>{if(d.open)ABERTAS.add(d.dataset.uf);else ABERTAS.delete(d.dataset.uf)}));
 }
-const APP_ESTADO="go";
 /* ===== sincronização dos clientes na nuvem ===== */
 const NUVEM_EX="cm-excluidos",NUVEM_DONO="cm-clientes-dono";
 function exLer(){try{return JSON.parse(localStorage.getItem(NUVEM_EX)||"{}")||{}}catch(_){return{}}}
@@ -744,12 +769,14 @@ async function sincronizar(){
   nuvemBusy=true;nuvemMsg("Sincronizando…");
   try{
     try{const d=localStorage.getItem(NUVEM_DONO);if(d&&d!==EMAIL){setC([]);exGravar({})}localStorage.setItem(NUVEM_DONO,EMAIL)}catch(_){}
-    const r=await api({acao:"clientes_carregar",estado:APP_ESTADO});
+    const r=await api({acao:"clientes_carregar",estado:estAtual()});
     if(!r||!r.ok)throw 0;
     const m=mesclar(getC(),r.clientes||[],Object.assign({},r.excluidos||{},exLer()));
     exGravar(m.ex);setC(m.lista);listar();
-    const w=await api({acao:"clientes_salvar",clientes:m.lista,excluidos:m.ex,estado:APP_ESTADO});
-    if(!w||!w.ok)throw 0;
+    const sig=l=>l.map(c=>c.id+":"+(c.upd||0)).sort().join("|"),sigE=e=>Object.keys(e||{}).sort().join("|");
+    if(sig(m.lista)!==sig(r.clientes||[])||sigE(m.ex)!==sigE(r.excluidos)){
+      const w=await api({acao:"clientes_salvar",clientes:m.lista,excluidos:m.ex,estado:estAtual()});
+      if(!w||!w.ok)throw 0}
     nuvemMsg("☁ Sincronizado");
   }catch(e){if(e&&e.message==="dispositivo")return;nuvemMsg("Sem sincronização agora (seus clientes continuam salvos neste aparelho).")}
   nuvemBusy=false;
@@ -758,7 +785,7 @@ async function sincronizar(){
 function agendarNuvem(){clearTimeout(nuvemT);nuvemT=setTimeout(sincronizar,1200)}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&EMAIL)agendarNuvem()});
 window.addEventListener("focus",()=>{if(EMAIL)agendarNuvem()});
-setInterval(()=>{if(EMAIL&&!document.hidden)agendarNuvem()},60000);
+setInterval(()=>{if(EMAIL&&!document.hidden)agendarNuvem()},600000);
 $("cli-exp").addEventListener("click",()=>{
   const a=getC();if(!a.length){toast("Nenhum cliente para exportar.");return}
   const blob=new Blob([JSON.stringify({app:"corretor-master",versao:1,exportado:new Date().toISOString(),clientes:a},null,2)],{type:"application/json"});
@@ -783,7 +810,7 @@ $("cli-file").addEventListener("change",async e=>{
 });
 $("lista").addEventListener("click",e=>{
   const o=e.target.closest("[data-open]"),d=e.target.closest("[data-del]");
-  if(o){const c=getC().find(x=>x.id===o.dataset.open);if(c){if((c.perfil.estado||APP_ESTADO)!==APP_ESTADO){toast("Este cliente é de outro estado. Reabra no app daquele estado.",4000);return}S={...VAZIO,...c.perfil,__id:c.id};syncInputs();render();tab("busca")}}
+  if(o){const c=getC().find(x=>x.id===o.dataset.open);if(c){S={...VAZIO,...c.perfil,__id:c.id};syncInputs();render();tab("busca")}}
   if(d){ if(d.dataset.arm){{const ex=exLer();ex[d.dataset.del]=Date.now();exGravar(ex)}setC(getC().filter(x=>x.id!==d.dataset.del));listar();agendarNuvem()} else{d.dataset.arm="1";d.textContent="Confirmar exclusão"} }
 });
 
@@ -933,7 +960,7 @@ $("c-wa").addEventListener("click",e=>{if(!CALC){e.preventDefault();toast("Infor
 document.addEventListener("click",async e=>{
   const b=e.target.closest("#c-go");if(!b)return;
   const v=String(num($("c-valor").value));b.disabled=true;
-  try{const d=await api({acao:"gerar",calc:v});CALCOK=v;calcular();logUso("calcular");verPlano();if(typeof d.restante==="number")toast("Buscas que restam hoje: "+d.restante,3000)}
+  try{const d=await api({acao:"gerar",calc:v,estado:estAtual()});CALCOK=v;calcular();logUso("calcular");verPlano();if(typeof d.restante==="number")toast("Buscas que restam hoje: "+d.restante,3000)}
   catch(er){b.disabled=false;const m=$("c-msg");if(m)m.innerHTML='<div class="alert warn">'+esc(er&&er.msg?er.msg:"Não foi possível calcular. Tente de novo.")+'</div>'+upgBtn(er.plano)}
 });
 calcular();
@@ -1163,10 +1190,10 @@ async function entBuscar(){
   if(!cats.length){$("ent-msg").innerHTML='<div class="alert warn">Marque pelo menos um tipo de lugar.</div>';return}
   const bsel=$("bairro"),bnome=S.bairro&&bsel.selectedOptions[0]?bsel.selectedOptions[0].text:"";
   const txt=$("ent-q").value.trim();
-  let body={acao:"entorno",cats,raio:ENTR},origem="endereco";
+  let body={acao:"entorno",cats,raio:ENTR,estado:estAtual()},origem="endereco";
   if(ENTLOC&&txt==="Minha localização atual"){body.lat=ENTLOC.lat;body.lon=ENTLOC.lon;body.q="Minha localização atual";origem="gps"}
-  else if(txt){body.q=txt+", "+cidadeObj().n+", "+(S.estado||"go").toUpperCase()+", Brasil"}
-  else if(bnome){body.q=bnome+", "+cidadeObj().n+", "+(S.estado||"go").toUpperCase()+", Brasil";origem="bairro"}
+  else if(txt){body.q=txt+", "+cidadeObj().n+", "+(S.estado||EST0).toUpperCase()+", Brasil"}
+  else if(bnome){body.q=bnome+", "+cidadeObj().n+", "+(S.estado||EST0).toUpperCase()+", Brasil";origem="bairro"}
   else{$("ent-msg").innerHTML='<div class="alert warn">Digite um endereço ou escolha um bairro na busca.</div>';return}
   $("ent-go").disabled=true;$("ent-msg").innerHTML='<div class="alert good">Consultando o mapa… pode levar alguns segundos.</div>';
   try{
@@ -1188,18 +1215,22 @@ async function entBuscar(){
 /* ---------- pedir upgrade (WhatsApp) ---------- */
 const FONE_UPG="5562982505081";let PLANO_ATUAL="";
 /* Cole aqui o link de pagamento do Asaas (assinatura mensal R$ 24,90). Vazio = o botão abre o WhatsApp. */
-const LINK_ASSINAR="https://www.asaas.com/000/c/4pcx7f9b3zqmz20n"; /* link da assinatura mensal (conta real do Asaas) */
-const LINK_BRASIL="https://www.asaas.com/000/c/vppxz39z9fuanp0d"; /* COLE AQUI o link do plano Capitais (R$ 49,90) */
-function assinarUrl(p){return LINK_ASSINAR||upgUrl(p)}
-function upgBtn(p){return !p||p==="unlimited"?"":'<div class="actions"><a class="btn acc" data-upg href="'+esc(assinarUrl(p))+'" target="_blank" rel="noopener">Assinar o Unlimited (R$ 24,90/mês)</a> <button type="button" class="btn alt" data-ja>Já assinei, liberar meu acesso</button></div>'+(LINK_ASSINAR?'<p class="hint">Ao pagar, use o <b>mesmo e-mail do login</b> ('+esc(EMAIL||"")+'). O plano é liberado automaticamente em poucos minutos.</p>':"")}
+const LINK_ASSINAR="https://www.asaas.com/000/c/4pcx7f9b3zqmz20n"; /* link da assinatura mensal de GOIÁS (conta real do Asaas) */
+/* Cada estado é uma assinatura própria de R$ 24,90/mês. Cole abaixo os links de SP e RJ gerados pelo criar-link. Vazio = abre o WhatsApp. */
+const LINKS_ASSINAR={go:LINK_ASSINAR,sp:"https://www.asaas.com/000/c/o9b3a0h7vx91j2qw",rj:"",br:"https://www.asaas.com/000/c/vppxz39z9fuanp0d"}; /* COLE AQUI o link de pagamento de São Paulo (criar-link?e=sp), entre as aspas do "sp" */
+const NOME_EST={go:"Goiás",sp:"São Paulo",rj:"Rio de Janeiro",mg:"Belo Horizonte",df:"Brasília",pr:"Curitiba",to:"Palmas"};
+function estAtual(){const e=(typeof S==="object"&&S&&S.estado)||EST0;return NOME_EST[e]?e:"go"}
+function rotuloAssinar(){const e=estAtual();return e==="go"?"Assinar o Unlimited (R$ 24,90/mês)":"Assinar "+NOME_EST[e]+" (R$ 24,90/mês)"}
+function assinarUrl(p){return LINKS_ASSINAR[estAtual()]||upgUrl(p)}
+function upgBtn(p){return !p||p==="unlimited"?"":'<div class="actions"><a class="btn acc" data-upg href="'+esc(assinarUrl(p))+'" target="_blank" rel="noopener">'+esc(rotuloAssinar())+'</a> <button type="button" class="btn alt" data-ja>Já assinei, liberar meu acesso</button></div>'+(LINKS_ASSINAR[estAtual()]?'<p class="hint">Ao pagar, use o <b>mesmo e-mail do login</b> ('+esc(EMAIL||"")+'). O plano é liberado automaticamente em poucos minutos.</p>':"")}
 function upgUrl(p){
-  const pl=p||PLANO_ATUAL,alvo="o plano Unlimited (R$ 24,90/mês)";if(pl==="unlimited")return "https://wa.me/"+FONE_UPG+"?text="+encodeURIComponent("Olá! Sou "+(EMAIL||"corretor")+" e preciso de ajuda com minha assinatura do Corretor Master.");
-  const m=`Olá! Sou ${EMAIL||"corretor"} e uso o Corretor Master${pl?" no plano "+pl:""}. Quero fazer upgrade para ${alvo}. Pode me passar como faço?`;
+  const pl=p||PLANO_ATUAL,est=estAtual(),alvo=est==="go"?"o plano Unlimited (R$ 24,90/mês)":"o plano de "+NOME_EST[est]+" (R$ 24,90/mês)";if(pl==="unlimited")return "https://wa.me/"+FONE_UPG+"?text="+encodeURIComponent("Olá! Sou "+(EMAIL||"corretor")+" e preciso de ajuda com minha assinatura do Corretor Master.");
+  const m=`Olá! Sou ${EMAIL||"corretor"} e uso o Corretor Master${pl?" no plano "+pl:""}${est!=="go"?" (estado: "+NOME_EST[est]+")":""}. Quero fazer upgrade para ${alvo}. Pode me passar como faço?`;
   return "https://wa.me/"+FONE_UPG+"?text="+encodeURIComponent(m);
 }
 document.addEventListener("click",async function(ev){const b=ev.target&&ev.target.closest&&ev.target.closest("[data-ja]");if(!b)return;ev.preventDefault();if(b.disabled)return;const t0=b.textContent;b.disabled=true;b.textContent="Verificando…";try{const d=await api({acao:"verificar_assinatura"});if(d&&d.ok){toast("Assinatura confirmada! Unlimited liberado.",4000);await verPlano();setTimeout(function(){location.reload()},1200);return}toast((d&&d.msg)||"Pagamento ainda não encontrado.",6000)}catch(e){toast(e&&e.msg?e.msg:"Não foi possível verificar agora. Tente de novo.",6000)}b.disabled=false;b.textContent=t0});
-async function verPlano(){try{const d=await api({acao:"meu_plano"});if(!d||!d.plano)return;PLANO_ATUAL=d.plano;setUpg();const e=$("meuplano");if(e){let t="Seu plano: "+d.plano+" · buscas hoje: "+d.usadas+(d.limite===null?" (ilimitado)":"/"+d.limite);if(d.plano==="unlimited"&&d.ate){const dt=new Date(d.ate);t+=" · assinatura ativa até "+dt.toLocaleDateString("pt-BR")+" (renova sozinha)"}e.textContent=t}}catch(_){}}
-function setUpg(){const j=$("jaass");if(j)j.hidden=PLANO_ATUAL==="unlimited";const a=$("upg");if(a){a.href=PLANO_ATUAL==="unlimited"?upgUrl("unlimited"):assinarUrl();a.textContent=PLANO_ATUAL==="unlimited"?"Falar com o suporte":"Assinar o Unlimited (R$ 24,90/mês)"}}
+async function verPlano(){try{const d=await api({acao:"meu_plano",estado:estAtual()});if(!d||!d.plano)return;PLANO_ATUAL=d.plano;PLANO_EST=d.estados||{};try{listar()}catch(_){}setUpg();const e=$("meuplano");if(e){const en=NOME_EST[estAtual()];let t="Seu plano"+(estAtual()==="go"?"":" em "+en)+": "+d.plano+" · buscas hoje: "+d.usadas+(d.limite===null?" (ilimitado)":"/"+d.limite);if(d.plano==="unlimited"&&d.ate){const dt=new Date(d.ate);t+=" · assinatura ativa até "+dt.toLocaleDateString("pt-BR")+" (renova sozinha)"}if(d.estados){t+=" · Estados: "+["go","sp","rj"].map(function(k){const x=d.estados[k];return NOME_EST[k]+" "+(x&&x.plano==="unlimited"?"✓":"—")}).join(" · ")}e.textContent=t}}catch(_){}}
+function setUpg(){const j=$("jaass");if(j)j.hidden=PLANO_ATUAL==="unlimited";const a=$("upg");if(a){a.href=PLANO_ATUAL==="unlimited"?upgUrl("unlimited"):assinarUrl();a.textContent=PLANO_ATUAL==="unlimited"?"Falar com o suporte":rotuloAssinar()}}
 
 
 /* ---------- gerar links (conta 1 busca) ---------- */
@@ -1231,8 +1262,8 @@ function gmsg0(t){$("g-msg").innerHTML=`<div class="alert crit">${esc(t)}</div>`
 let EMAIL=null;
 const gmsg=(k,t)=>{$("g-msg").innerHTML=t?`<div class="alert ${k}">${esc(t)}</div>`:""};
 let CARGA=null;
-async function carregar(){const c=await api({acao:"catalogo"});ESTADOS=c.estados||ESTADOS;CIDADES=c.cidades;BAIRROS=c.bairros;CONDOS=c.condos;PARQUES=c.parques;PRONTO=true;fillSelects();syncInputs();render();recentes()}
-function limparDados(){GER=null;CALCOK="";ENT=null;ENTLOC=null;CONV_EDIT=false;REG=null;REGC={};PRONTO=false;CARGA=null;ESTADOS=[{s:"go",n:"Goiás",uf:"GO"}];CIDADES=[{n:"Goiânia",s:"goiania",uf:"go"}];BAIRROS=[];CONDOS={};PARQUES=[];LS=[]}
+async function carregar(){const c=await api({acao:"catalogo"});ESTADOS=c.estados||ESTADOS;CIDADES=c.cidades;if(!CIDADES.length)throw new Error("catálogo vazio: atualize a função smart-endpoint");BAIRROS=c.bairros;CONDOS=c.condos;PARQUES=c.parques;PRONTO=true;fillSelects();syncInputs();render();recentes()}
+function limparDados(){GER=null;CALCOK="";ENT=null;ENTLOC=null;CONV_EDIT=false;REG=null;REGC={};PRONTO=false;CARGA=null;ESTADOS=phEst().E;CIDADES=phEst().C;BAIRROS=[];CONDOS={};PARQUES=[];LS=[]}
 function mostrarGate(){limparDados();marcaDagua("");$("app").hidden=true;$("gate").hidden=false;$("sair").hidden=true;$("g-form").hidden=false;$("g-code").hidden=true}
 async function logUso(acao){if(!EMAIL)return;try{await sb.from("uso").insert({email:EMAIL,acao})}catch(_){}}
 /* logout local: não depende da rede (signOut padrão falha em silêncio se o servidor não responder) */
@@ -1267,8 +1298,16 @@ async function checar(session){
   enviarAceite();
 }
 async function enviarAceite(){try{if(localStorage.getItem("cm_aceita_email")!=="1")return;const r=await api({acao:"aceite_email",aceita:true,estado:(typeof S!=="undefined"&&S.estado)||"go"});if(r&&r.ok)localStorage.removeItem("cm_aceita_email")}catch(_){}}
-try{if(LINK_BRASIL){$("brasil-a").href=LINK_BRASIL;$("brasil-box").hidden=false}}catch(_){}
-document.querySelectorAll("[data-breve]").forEach(b=>b.addEventListener("click",()=>{const m=$("breve-msg");m.hidden=false;m.textContent=b.dataset.breve+": em construção. Em breve no Corretor Master."}));
+try{if(LINKS_ASSINAR.br){$("brasil-a").href=LINKS_ASSINAR.br;$("brasil-box").hidden=false}}catch(_){}
+const BREVE=[["rj","Rio de Janeiro"],["mg","Belo Horizonte"],["df","Brasília"],["pr","Curitiba"],["to","Palmas"]];
+function outrosEstados(){const el=$("trocar-estado");if(!el)return;
+  const dis=ESTADOS.filter(e=>e.s!==S.estado).map(e=>`<button type="button" class="btn alt" data-ir="${esc(e.s)}">${esc(e.n)}</button>`);
+  const br=BREVE.filter(x=>!ESTADOS.some(e=>e.s===x[0])).map(x=>`<button type="button" class="btn alt" data-breve="${esc(x[1])}">${esc(x[1])} <small style="margin-left:6px;opacity:.75">· em breve</small></button>`);
+  el.innerHTML=dis.concat(br).join("")}
+$("outros-estados").addEventListener("click",e=>{
+  const i=e.target.closest("[data-ir]");if(i){$("estado").value=i.dataset.ir;$("estado").dispatchEvent(new Event("input"));window.scrollTo({top:0,behavior:"smooth"});return}
+  const b=e.target.closest("[data-breve]");if(b){const m=$("breve-msg");m.hidden=false;m.textContent=b.dataset.breve+": em construção. Em breve no Corretor Master."}});
+outrosEstados();
 $("g-go").addEventListener("click",async()=>{
   const email=$("g-email").value.trim().toLowerCase();
   if(!/^\S+@\S+\.\S+$/.test(email)){gmsg("warn","Digite um e-mail válido.");return}
