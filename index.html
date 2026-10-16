@@ -709,6 +709,8 @@ function getC(){return mem||load()}
 function setC(a){mem=a;store(a);$("cnt").textContent=a.length?`(${a.length})`:"";recentes()}
 $("salvar").addEventListener("click",()=>{
   if(!S.nome.trim()){$("salvo-msg").innerHTML='<div class="alert warn">Informe o nome do cliente para salvar.</div>';return}
+  const prev=S.__id?getC().find(c=>c.id===S.__id):null;
+  if(prev&&String(prev.perfil.nome||"").trim().toLowerCase()!==S.nome.trim().toLowerCase())S.__id=undefined;
   const a=getC().filter(c=>c.id!==S.__id);const id=S.__id||String(Date.now());
   a.unshift({id,data:new Date().toLocaleString("pt-BR"),upd:Date.now(),perfil:{...S,__id:undefined}});
   S.__id=id;setC(a);agendarNuvem();$("salvo-msg").innerHTML='<div class="alert good">Cliente salvo na sua conta.</div>';
